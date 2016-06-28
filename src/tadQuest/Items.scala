@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 object Sector extends Enumeration {
   type Sector = Value

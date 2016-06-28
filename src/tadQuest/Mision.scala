@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 trait Recompensa {
   type TiposRecompensa = Equipo => Equipo

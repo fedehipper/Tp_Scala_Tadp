@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double, val inteligenciaBase: Double,
                  val job: Option[Trabajo] = None, val inventario: Inventario = new Inventario) { 

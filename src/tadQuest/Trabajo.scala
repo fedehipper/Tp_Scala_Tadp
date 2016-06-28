@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 abstract class Trabajo(val _HP: Double = 0, val _fuerza: Double = 0, 
     val _velocidad: Double = 0, val _inteligencia: Double = 0) {

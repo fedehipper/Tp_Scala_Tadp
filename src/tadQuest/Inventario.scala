@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 import Sector._
 import scala.util.{Try, Success, Failure}

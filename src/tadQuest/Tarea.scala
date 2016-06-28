@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 trait Tarea {
   def facilidadPara(equipo: Equipo): Option[Heroe => Double]

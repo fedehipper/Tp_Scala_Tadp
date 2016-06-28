@@ -1,4 +1,4 @@
-package scala
+package tadQuest
 
 import org.junit.{Test, Before}
 import org.junit.Assert._
