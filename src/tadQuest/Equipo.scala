@@ -15,9 +15,10 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
     else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
   }
  
+  def maximo = heroes map(_: Heroe => Double) max
+  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    val maximo = heroes.map(h => cuantificador(h)).max
-    heroes.filter(h => cuantificador(h) == maximo).headOption
+    heroes filter(cuantificador(_) equals maximo(cuantificador)) headOption
   }
   
   def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
@@ -53,13 +54,13 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
   )
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-      val equipo = this
-      val resultadoEntrenar = for {
-        misionElegida <- taberna.elegirMision(criterio, this)
-        equipo <- realizarMision(misionElegida).toOption
-      }
-      yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
-      resultadoEntrenar.getOrElse(equipo)
+    val equipo = this
+    val resultadoEntrenar = for {
+      misionElegida <- taberna.elegirMision(criterio, this)
+      equipo <- realizarMision(misionElegida).toOption
+    }
+    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
+    resultadoEntrenar.getOrElse(equipo)
   }
   
   
