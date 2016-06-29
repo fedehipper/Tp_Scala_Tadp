@@ -1,10 +1,10 @@
 package tadQuest
 
-import scala.util.{Try, Success, Failure}
+import scala.util.Try
 
 class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
 
-case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoComun: Double = 0) {
+case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
   def miembrosConTrabajo = heroes.filter(_.job.isDefined)
@@ -15,11 +15,9 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
     else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
   }
  
-  def maximo = heroes map(_: Heroe => Double) max
+  def maximo = heroes.map(_: Heroe => Double).max
   
-  def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    heroes filter(cuantificador(_) equals maximo(cuantificador)) headOption
-  }
+  def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) equals maximo(cuantificador))
   
   def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
   
@@ -62,6 +60,5 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
     yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
     resultadoEntrenar.getOrElse(equipo)
   }
-  
-  
+ 
 }

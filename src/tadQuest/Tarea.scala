@@ -27,7 +27,7 @@ case object ForzarPuerta extends Tarea {
   override def afectar(heroe: Heroe): Heroe = heroe.modificarStats(-5, 1, 0, 0)
 }
 
-case class RobarTalisman(val talisman: Item) extends Tarea {
+case class RobarTalisman(talisman: Item) extends Tarea {
    def facilidadPara(equipo: Equipo): Option[Heroe => Double] = for {
      lider <- equipo.lider; trabajo <- lider.job 
      if trabajo eq Ladron

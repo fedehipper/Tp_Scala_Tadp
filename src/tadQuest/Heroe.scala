@@ -1,7 +1,7 @@
 package tadQuest
 
-case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double, val inteligenciaBase: Double,
-                 val job: Option[Trabajo] = None, val inventario: Inventario = new Inventario) { 
+case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inteligenciaBase: Double,
+                 job: Option[Trabajo] = None, inventario: Inventario = new Inventario) { 
   
   def statTrabajo(base: Double, delta: (Trabajo, Double) => Double) = job.foldLeft(base)((b, j) => delta(j, b))
   
@@ -10,7 +10,7 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   def velocidadFinal = mayorAUno(inventario velocidadFinal(this, statTrabajo(velocidadBase,  _ velocidad _ )))
   def inteligenciaFinal = mayorAUno(inventario inteligenciaFinal(this, statTrabajo(inteligenciaBase, _ inteligencia _ )))
   
-  def mayorAUno(valorStat: Double): Double = if(valorStat < 1) 1 ; else valorStat
+  def mayorAUno(valorStat: Double): Double = if(valorStat < 1) 1: Double ; else valorStat
   
   def equipar(item: Item): Heroe = copy(inventario = inventario.equipar(this, item).get)
   

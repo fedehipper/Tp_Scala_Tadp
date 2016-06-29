@@ -50,7 +50,7 @@ object CascoVikingo extends Item(Cabeza, 5) {
 }
 
 object VinchaDelBufaloDelAgua extends Item(Cabeza, 50) {
-  override def cumpleCondicion(heroe: Heroe) = !heroe.job.isDefined
+  override def cumpleCondicion(heroe: Heroe) = heroe.job.isEmpty
   
   override def inteligencia(heroe: Heroe, valor: Double) = {
     if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30 ; else valor

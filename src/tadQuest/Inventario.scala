@@ -1,11 +1,11 @@
 package tadQuest
 
 import Sector._
-import scala.util.{Try, Success, Failure}
+import scala.util.Try
 
 object NoSePudoEquiparUnItem extends Exception
 
-case class Inventario(val items: List[Item] = Nil) {
+case class Inventario(items: List[Item] = Nil) {
    
   def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
     if(item cumpleCondicion heroe) {
@@ -40,10 +40,10 @@ case class Inventario(val items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
-  def fuerzaFinal = obtenerDeItems(_:Heroe, _:Double)(_ fuerza(_, _))
-  def HPFinal = obtenerDeItems(_:Heroe, _:Double)(_ HP(_, _))
-  def velocidadFinal = obtenerDeItems(_:Heroe, _:Double)(_ velocidad(_, _))
-  def inteligenciaFinal = obtenerDeItems(_:Heroe, _:Double)(_ inteligencia(_, _))
+  def fuerzaFinal = obtenerDeItems(_:Heroe, _:Double)(_.fuerza(_, _))
+  def HPFinal = obtenerDeItems(_:Heroe, _:Double)(_.HP(_, _))
+  def velocidadFinal = obtenerDeItems(_:Heroe, _:Double)(_.velocidad(_, _))
+  def inteligenciaFinal = obtenerDeItems(_:Heroe, _:Double)(_.inteligencia(_, _))
   
   def cantidadItems: Double = items.size
 }
