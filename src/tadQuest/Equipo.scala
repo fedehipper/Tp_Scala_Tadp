@@ -42,13 +42,13 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     yield elMejor
   }
   
-  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
+  def cobrarRecompensa(mision: Mision, equipo: Equipo): Equipo = mision.recompensa.cobrar(equipo)
   
   def realizarMision(mision: Mision): Try[Equipo] = Try (
-    mision.tareas.foldLeft(this)((equipo, tarea) => {
+    cobrarRecompensa(mision, mision.tareas.foldLeft(this)((equipo, tarea) => {
       val puedeRealizar = for {heroe <- equipo elMejorPuedeRealizar tarea}
-      yield reemplazar(heroe, heroe realizarTarea tarea)
-      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
+      yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
+      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea))}))    
   )
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
