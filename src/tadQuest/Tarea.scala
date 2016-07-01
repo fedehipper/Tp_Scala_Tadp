@@ -7,10 +7,9 @@ trait Tarea {
 
 case object PelearContraMonstruo extends Tarea {
   def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
-    val facilidad: Option[Heroe => Double] = for {
-      lider <- equipo.lider; trabajo <- lider.job 
+    val facilidad = for {lider <- equipo.lider; trabajo <- lider.job 
       if trabajo eq Guerrero
-    } yield h => 20 
+    } yield (h => 20): Heroe => Double
     facilidad.orElse(Some(h => 10))
   }
   override def afectar(heroe: Heroe): Heroe = {
