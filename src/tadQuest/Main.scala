@@ -22,6 +22,7 @@ object Main {
  
 
     println(MatarAlDragon.facilidadPara(otroEquipo).get(heroe))
+    println(heroe.realizarTarea(MatarAlDragon))
     
     
     
