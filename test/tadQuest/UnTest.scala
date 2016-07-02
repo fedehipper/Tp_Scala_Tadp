@@ -310,11 +310,6 @@ class UnTest  {
   }
 
   @Test
-  def equipoForzarPuertaYModificaStatsDelHeroe() = {
-    assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
-  }
-
-  @Test
   def equipoEsModificadoSiRealizaUnaMision() = {
     assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
       .get.pozoComun, 100,0.01)
@@ -364,7 +359,7 @@ class UnTest  {
   @Test
   def equipoRealizaVariasMisionesAumentandoSuPozoComun() = {
     val mision1 = new Mision(List(PelearContraMonstruo, PelearContraMonstruo), GanarOroParaElPozoComun(100))
-    val mision2 = new Mision(List(ForzarPuerta), GanarOroParaElPozoComun(50))
+    val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(50))
     val taberna = new Taberna(List(mision1, mision2))
     assertEquals(grupo.entrenar(taberna, (_, _) => grupo.pozoComun > grupo.pozoComun).pozoComun, 150, 0.01)
   }

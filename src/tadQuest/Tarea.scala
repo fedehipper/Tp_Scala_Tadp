@@ -23,7 +23,10 @@ case object ForzarPuerta extends Tarea {
     val incremento = equipo.miembrosConTrabajo.count(_.job.get eq Ladron)
     Some(_.inteligenciaFinal + 10 * incremento)
   }
-  override def afectar(heroe: Heroe): Heroe = heroe.modificarStats(-5, 1, 0, 0)
+  override def afectar(heroe: Heroe): Heroe = {
+    if(List(Mago, Ladron).contains(heroe.job.get)) heroe
+    else heroe.modificarStats(-5, 1, 0, 0)
+  }
 }
 
 case class RobarTalisman(talisman: Item) extends Tarea {
@@ -31,4 +34,15 @@ case class RobarTalisman(talisman: Item) extends Tarea {
      lider <- equipo.lider; trabajo <- lider.job 
      if trabajo eq Ladron
    } yield (_:Heroe).velocidadFinal
+   override def afectar(heroe: Heroe): Heroe = heroe.equipar(talisman)
 }
+ 
+case object MatarAlDragon extends Tarea {
+  def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
+    if (equipo.heroes.size >= 1) Some(h => h.fuerzaFinal * 50)
+    else Some(_.fuerzaFinal * 10)
+  }
+}
+
+
+
