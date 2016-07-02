@@ -53,16 +53,16 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, 50) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job.isEmpty
   
   override def inteligencia(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30 ; else valor
+    if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30 else valor
   }
   override def HP(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 ; else valor
+    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 else valor
   }
   override def fuerza(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 ; else valor
+    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 else valor
   }
   override def velocidad(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 ; else valor
+    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 else valor
   }
 }
 
