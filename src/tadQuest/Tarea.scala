@@ -39,7 +39,7 @@ case class RobarTalisman(talisman: Item) extends Tarea {
  
 case object MatarAlDragon extends Tarea {
   def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
-    if (equipo.heroes.size >= 1) Some(_.fuerzaFinal * 50)
+    if (equipo.heroes.size > 5) Some(_.fuerzaFinal * 50)
     else Some(_.fuerzaFinal * 10)
   }
   override def afectar(heroe: Heroe): Heroe = heroe.modificarStats(1000, 1000, 1000, 1000)
