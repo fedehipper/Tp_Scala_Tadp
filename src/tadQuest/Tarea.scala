@@ -24,8 +24,10 @@ case object ForzarPuerta extends Tarea {
     Some(_.inteligenciaFinal + 10 * incremento)
   }
   override def afectar(heroe: Heroe): Heroe = {
-    if(List(Mago, Ladron).contains(heroe.job.get)) heroe
-    else heroe.modificarStats(-5, 1, 0, 0)
+    val tieneTrabajo = for{trabajo <- heroe.job
+      if List(Mago, Ladron).contains(trabajo)
+    } yield heroe
+    tieneTrabajo.getOrElse(heroe.modificarStats(-5, 1, 0, 0))
   }
 }
 

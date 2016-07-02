@@ -18,12 +18,13 @@ object Main {
     
     val heroe = new Heroe(10, 20, 30, 40)
     val otro = new Heroe(1,2,3,4)
-    val equipo = new Equipo("nom", List(heroe))
+    val equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
  
 
     println(MatarAlDragon.facilidadPara(otroEquipo).get(heroe))
     println(heroe.realizarTarea(MatarAlDragon))
-    
+    println(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
+      PelearContraMonstruo),GanarOroParaElPozoComun(1000))))
     
     
     
