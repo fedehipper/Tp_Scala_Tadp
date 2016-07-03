@@ -316,19 +316,6 @@ class UnTest  {
   }
 
   @Test
-  def equipoNoPuedeRealizarUnaMisionSinLider() = {
-    assertTrue(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
-      PelearContraMonstruo),GanarOroParaElPozoComun(1000))).isFailure)
-  }
-
-  @Test
-  def equipoNoPuedeRealizarUnaTareaYLaInforma() = {
-    assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
-      transform(e => Failure(new TareaFallida(equipo, RobarTalisman(Maldito))), f => Try(RobarTalisman(Maldito))).get,
-      RobarTalisman(Maldito))
-  }
-
-  @Test
   def testElegirMision() = {
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))

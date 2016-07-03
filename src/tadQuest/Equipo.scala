@@ -2,7 +2,38 @@ package tadQuest
 
 import scala.util.{Try, Failure, Success}
 
-case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
+abstract class TareaFallida extends Exception
+case class TareaFallidaUno(equipo: Equipo, tarea: Tarea) extends TareaFallida 
+case class TareaFallidaDos(equipo: Equipo, tarea: Tarea) extends TareaFallida
+ 
+trait Exito[Equipo] {
+  def map(f: Equipo => Equipo): Exito[Equipo]
+  def toOption: Option[Equipo]
+  def isSuccess: Boolean = true
+  def get: Equipo
+  def isFailure: Boolean
+}
+
+case class SuccessConFallida(equipo: Equipo) extends Exito[Equipo] {
+  def map(f: Equipo => Equipo) = SuccessConFallida(f(equipo))
+  def toOption: Option[Equipo] = Some(equipo)
+  def get: Equipo = equipo
+  def isFailure: Boolean = false
+}
+case class SuccessSinFallida(equipo: Equipo) extends Exito[Equipo] {
+  def map(f: Equipo => Equipo) = SuccessSinFallida(f(equipo))
+  def toOption: Option[Equipo] = Some(equipo)
+  def get: Equipo = equipo
+  def isFailure: Boolean = false
+}
+case class Fallo(tareaFallida: TareaFallida) extends Exito[Equipo] {
+  def map(f: Equipo => Equipo) = this
+  override def toOption: Option[Equipo] = None
+  override def isSuccess: Boolean = false
+  def get = ???
+  def isFailure: Boolean = true
+}
+
 
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
@@ -44,18 +75,29 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Try[Equipo] = 
-    mision.tareas.foldLeft(Success(this): Try[Equipo])((resultadoAnterior, tarea) => {
+  def realizarMision(mision: Mision): Exito[Equipo] = 
+    mision.tareas.foldLeft(SuccessSinFallida(this): Exito[Equipo])((resultadoAnterior, tarea) => {
       resultadoAnterior match {
-        case Failure(_) => resultadoAnterior
-        case Success(equipo) => {
-           val postTarea: Option[Equipo] = for {
-            heroe <- equipo elMejorPuedeRealizar tarea
+        case Fallo(tareaFallida) => tareaFallida match {
+          case TareaFallidaDos(equipo, tarea) => Fallo(TareaFallidaDos(equipo, tarea)) 
+          case TareaFallidaUno(equipo, _) => SuccessConFallida(equipo)
+        }
+        
+        case SuccessConFallida(equipo) => {
+          val postTarea: Option[Equipo] = for {
+          heroe <- equipo elMejorPuedeRealizar tarea
           } yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
-          postTarea.fold(Failure(TareaFallida(equipo, tarea)): Try[Equipo])(Success(_))
+          postTarea.fold(Fallo(TareaFallidaDos(equipo, tarea)): Exito[Equipo])(SuccessConFallida(_))
+        }
+        
+        case SuccessSinFallida(equipo) => {
+          val postTarea: Option[Equipo] = for {
+          heroe <- equipo elMejorPuedeRealizar tarea
+          } yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
+          postTarea.fold(Fallo(TareaFallidaUno(equipo, tarea)): Exito[Equipo])(SuccessSinFallida(_))
         }
       }
-    }).map(_.cobrarRecompensa(mision))
+  }).map(_.cobrarRecompensa(mision))
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
     val equipo = this
