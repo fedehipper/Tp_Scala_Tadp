@@ -6,27 +6,27 @@ abstract class TareaFallida extends Exception
 case class TareaFallidaUno(equipo: Equipo, tarea: Tarea) extends TareaFallida 
 case class TareaFallidaDos(equipo: Equipo, tarea: Tarea) extends TareaFallida
  
-trait Exito[Equipo] {
-  def map(f: Equipo => Equipo): Exito[Equipo]
+trait Exito {
+  def map(f: Equipo => Equipo): Exito
   def toOption: Option[Equipo]
   def isSuccess: Boolean = true
   def get: Equipo
   def isFailure: Boolean
 }
 
-case class SuccessConFallida(equipo: Equipo) extends Exito[Equipo] {
+case class SuccessConFallida(equipo: Equipo) extends Exito {
   def map(f: Equipo => Equipo) = SuccessConFallida(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
   def get: Equipo = equipo
   def isFailure: Boolean = false
 }
-case class SuccessSinFallida(equipo: Equipo) extends Exito[Equipo] {
+case class SuccessSinFallida(equipo: Equipo) extends Exito {
   def map(f: Equipo => Equipo) = SuccessSinFallida(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
   def get: Equipo = equipo
   def isFailure: Boolean = false
 }
-case class Fallo(tareaFallida: TareaFallida) extends Exito[Equipo] {
+case class Fallo(tareaFallida: TareaFallida) extends Exito {
   def map(f: Equipo => Equipo) = this
   override def toOption: Option[Equipo] = None
   override def isSuccess: Boolean = false
@@ -75,8 +75,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Exito[Equipo] = 
-    mision.tareas.foldLeft(SuccessSinFallida(this): Exito[Equipo])((resultadoAnterior, tarea) => {
+  def realizarMision(mision: Mision): Exito = 
+    mision.tareas.foldLeft(SuccessSinFallida(this): Exito)((resultadoAnterior, tarea) => {
       resultadoAnterior match {
         case Fallo(tareaFallida) => tareaFallida match {
           case TareaFallidaDos(equipo, tarea) => Fallo(TareaFallidaDos(equipo, tarea)) 
@@ -84,11 +84,11 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
         }
         
         case SuccessConFallida(equipo) => {
-          postTarea(equipo, tarea).fold(Fallo(TareaFallidaDos(equipo, tarea)): Exito[Equipo])(SuccessConFallida(_))
+          postTarea(equipo, tarea).fold(Fallo(TareaFallidaDos(equipo, tarea)): Exito)(SuccessConFallida(_))
         }
         
         case SuccessSinFallida(equipo) => {
-          postTarea(equipo, tarea).fold(Fallo(TareaFallidaUno(equipo, tarea)): Exito[Equipo])(SuccessSinFallida(_))
+          postTarea(equipo, tarea).fold(Fallo(TareaFallidaUno(equipo, tarea)): Exito)(SuccessSinFallida(_))
         }
       }
   }).map(_.cobrarRecompensa(mision))
