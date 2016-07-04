@@ -9,7 +9,7 @@ case class TareaFallidaDos(equipo: Equipo, tarea: Tarea) extends TareaFallida
 trait Exito {
   def map(f: Equipo => Equipo): Exito
   def toOption: Option[Equipo]
-  def isSuccess: Boolean = true
+  def isSuccess: Boolean
   def get: Equipo
   def isFailure: Boolean
 }
@@ -18,19 +18,21 @@ case class SuccessConFallida(equipo: Equipo) extends Exito {
   def map(f: Equipo => Equipo) = SuccessConFallida(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
   def get: Equipo = equipo
+  def isSuccess: Boolean = true
   def isFailure: Boolean = false
 }
 case class SuccessSinFallida(equipo: Equipo) extends Exito {
   def map(f: Equipo => Equipo) = SuccessSinFallida(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
   def get: Equipo = equipo
+  def isSuccess: Boolean = true
   def isFailure: Boolean = false
 }
 case class Fallo(tareaFallida: TareaFallida) extends Exito {
   def map(f: Equipo => Equipo) = this
-  override def toOption: Option[Equipo] = None
-  override def isSuccess: Boolean = false
-  def get = ???
+  def toOption: Option[Equipo] = None
+  def isSuccess: Boolean = false
+  def get = throw new Exception("None.get")
   def isFailure: Boolean = true
 }
 
