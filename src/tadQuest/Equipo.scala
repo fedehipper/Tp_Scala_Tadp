@@ -1,40 +1,36 @@
 package tadQuest
 
-import scala.util.{Try, Failure, Success}
-
-abstract class TareaFallida extends Exception
-case class TareaFallidaUno(equipo: Equipo, tarea: Tarea) extends TareaFallida 
-case class TareaFallidaDos(equipo: Equipo, tarea: Tarea) extends TareaFallida
- 
 trait Exito {
   def map(f: Equipo => Equipo): Exito
   def toOption: Option[Equipo]
   def isSuccess: Boolean
   def get: Equipo
-  def isFailure: Boolean
 }
 
-case class SuccessConFallida(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo) = SuccessConFallida(f(equipo))
+case class SuccessPrimera(equipo: Equipo) extends Exito {
+  def map(f:Equipo => Equipo): Exito = SuccessPrimera(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
-  def get: Equipo = equipo
   def isSuccess: Boolean = true
-  def isFailure: Boolean = false
+  def get: Equipo = equipo
 }
-case class SuccessSinFallida(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo) = SuccessSinFallida(f(equipo))
+
+case class SuccessSegunda(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo): Exito = SuccessSegunda(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
-  def get: Equipo = equipo
   def isSuccess: Boolean = true
-  def isFailure: Boolean = false
+  def get: Equipo = equipo
 }
-case class Fallo(tareaFallida: TareaFallida) extends Exito {
-  def map(f: Equipo => Equipo) = this
+
+case class FallidoPor(caso: CasoFallo) extends Exito {
+  def map(f: Equipo => Equipo): Exito = this
   def toOption: Option[Equipo] = None
   def isSuccess: Boolean = false
-  def get = throw new Exception("None.get")
-  def isFailure: Boolean = true
+  def get: Equipo = throw new NoSuchElementException("None.get")
 }
+
+trait CasoFallo
+case class PrimeraVes(equipo: Equipo) extends CasoFallo
+case class TareaFallida(equipo: Equipo, tarea: Tarea) extends CasoFallo
 
 
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
@@ -77,21 +73,18 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Exito = 
-    mision.tareas.foldLeft(SuccessSinFallida(this): Exito)((resultadoAnterior, tarea) => {
+  def realizarMision(mision: Mision): Exito =
+    mision.tareas.foldLeft(SuccessPrimera(this): Exito)((resultadoAnterior, tarea) => {
       resultadoAnterior match {
-        case Fallo(tareaFallida) => tareaFallida match {
-          case TareaFallidaDos(equipo, tarea) => Fallo(TareaFallidaDos(equipo, tarea)) 
-          case TareaFallidaUno(equipo, _) => SuccessConFallida(equipo)
+        case FallidoPor(cantidad) => cantidad match {
+          case PrimeraVes(equipo) => SuccessSegunda(equipo)
+          case TareaFallida(equipo, tareaFallida) => FallidoPor(TareaFallida(equipo, tareaFallida))
         }
+        case SuccessPrimera(equipo) => 
+          postTarea(equipo, tarea).fold(FallidoPor(PrimeraVes(equipo)): Exito)(SuccessPrimera(_))
         
-        case SuccessConFallida(equipo) => {
-          postTarea(equipo, tarea).fold(Fallo(TareaFallidaDos(equipo, tarea)): Exito)(SuccessConFallida(_))
-        }
-        
-        case SuccessSinFallida(equipo) => {
-          postTarea(equipo, tarea).fold(Fallo(TareaFallidaUno(equipo, tarea)): Exito)(SuccessSinFallida(_))
-        }
+        case SuccessSegunda(equipo) => 
+          postTarea(equipo, tarea).fold(FallidoPor(TareaFallida(equipo, tarea)): Exito)(SuccessSegunda(_))
       }
   }).map(_.cobrarRecompensa(mision))
 
