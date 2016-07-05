@@ -19,10 +19,10 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) equals maximo(cuantificador))
   
-  def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
+  def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
-  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa): Equipo = {
-    copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
+  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa) = {
+    copy(heroes = heroes.filter(condicion(_)).map(_ agregarRecompensaStats recompensa))
   }
  
   def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
@@ -35,7 +35,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     equipoConItem.getOrElse(incrementarPozo(item.precio))
   }
   
-  def equiparATodos(item: Item): Equipo = copy(heroes = heroes.map(_.equipar(item)))
+  def equiparATodos(item: Item) = copy(heroes = heroes.map(_ equipar item))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
     for {facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad)}
