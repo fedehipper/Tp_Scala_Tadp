@@ -8,8 +8,7 @@ abstract class Trabajo(val _HP: Double = 0, val _fuerza: Double = 0,
   def velocidad = (_:Double) + _velocidad
   def inteligencia = (_:Double) + _inteligencia
   
-  def statPrincipal(heroe: Heroe):Double
-  
+  def statPrincipal(heroe: Heroe): Double
 }
 
 case object Guerrero extends Trabajo(_HP = 10, _fuerza = 15, _inteligencia = -10) {

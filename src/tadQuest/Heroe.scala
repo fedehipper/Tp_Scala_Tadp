@@ -3,7 +3,7 @@ package tadQuest
 case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inteligenciaBase: Double,
                  job: Option[Trabajo] = None, inventario: Inventario = new Inventario) { 
   
-  def statTrabajo(base: Double, delta: (Trabajo, Double) => Double) = job.foldLeft(base)((b, j) => delta(j, b))
+  def statTrabajo(base: Double, delta: (Trabajo, Double) => Double) = job.fold(base)(delta(_, base))
   
   def fuerzaFinal = mayorAUno(inventario.fuerzaFinal(this, statTrabajo(fuerzaBase, _ fuerza _ )))
   def HPFinal = mayorAUno(inventario.HPFinal(this, statTrabajo(HPBase, _ HP _)))
@@ -16,7 +16,7 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   
   def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
     
-  def cantidadItems: Double = inventario.cantidadItems
+  def cantidadItems = inventario.cantidadItems
   
   def desequipar(item: Item) = copy(inventario = inventario.desequipar(item))
    
