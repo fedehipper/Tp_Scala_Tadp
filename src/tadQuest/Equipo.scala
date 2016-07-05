@@ -90,7 +90,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
 
   def postTarea(equipo: Equipo, tarea: Tarea) = {
     for {heroe <- equipo elMejorPuedeRealizar tarea} 
-    yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
+    yield equipo reemplazar(heroe, heroe realizarTarea tarea)
   }
   
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
