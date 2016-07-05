@@ -48,15 +48,16 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     mision.tareas.foldLeft(Success(this): Try[Equipo])((resultadoAnterior, tarea) => {
       resultadoAnterior match {
         case Failure(_) => resultadoAnterior
-        case Success(equipo) => {
-           val postTarea: Option[Equipo] = for {
-            heroe <- equipo elMejorPuedeRealizar tarea
-          } yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
-          postTarea.fold(Failure(TareaFallida(equipo, tarea)): Try[Equipo])(Success(_))
-        }
+        case Success(equipo) => 
+          postTarea(equipo, tarea).fold(Failure(TareaFallida(equipo, tarea)): Try[Equipo])(Success(_))
       }
-    }).map(_.cobrarRecompensa(mision))
+    }).map(_ cobrarRecompensa mision)
 
+  def postTarea(equipo: Equipo, tarea: Tarea): Option[Equipo] = {
+    for (heroe <- equipo elMejorPuedeRealizar tarea) 
+    yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
+  }
+    
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
     val equipo = this
     val resultadoEntrenar = for {
