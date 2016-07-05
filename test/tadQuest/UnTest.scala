@@ -148,24 +148,24 @@ class UnTest  {
   @Test
   def cumpleConEquiparEspadaYEscudo() = {
     assertEquals(capitanAmerica.asignarTrabajo(Mago).equipar(EscudoAntiRobo).
-      equipar(PalitoMagico).cantidadItems, 2, 0.01)
+      equipar(PalitoMagico).inventario.cantidadItems, 2, 0.01)
   }
 
   @Test
   def equiparArmaDobleReemplazaArmaSimple() = {
-    assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(ArcoViejo).cantidadItems, 1, 0.001)
+    assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(ArcoViejo).inventario.cantidadItems, 1, 0.001)
   }
 
   @Test
   def equiparTresArmasSimplesDiferentes() = {
     assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(EscudoAntiRobo).
-      equipar(EspadaDeLaVida).cantidadItems, 2, 0.001)
+      equipar(EspadaDeLaVida).inventario.cantidadItems, 2, 0.001)
   }
 
   @Test
   def equiparDosArmasSimplesIgualesYUnaDiferenteQueReemplazaAUna() = {
     assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(EscudoAntiRobo).
-      equipar(EspadaDeLaVida).cantidadItems, 2, 0.001)
+      equipar(EspadaDeLaVida).inventario.cantidadItems, 2, 0.001)
   }
 
   @Test
