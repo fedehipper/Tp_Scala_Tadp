@@ -12,20 +12,17 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   
   def mayorAUno = (_:Double) max 1
   
-  def equipar(item: Item): Heroe = copy(inventario = inventario.equipar(this, item).get)
+  def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   
-  def asignarTrabajo(trabajo: Trabajo): Heroe = copy(job = Some(trabajo)).actualizarEstado
+  def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
     
   def cantidadItems: Double = inventario.cantidadItems
   
-  def desequipar(item: Item): Heroe = copy(inventario = inventario.desequipar(item))
+  def desequipar(item: Item) = copy(inventario = inventario.desequipar(item))
    
-  def statPrincipal: Option[Double] = {
-    val semilla: Option[Double] = None
-    job.foldLeft(semilla)((base, trabajo) => Some(trabajo.statPrincipal(this)))
-  }
+  def statPrincipal = job.fold(None: Option[Double])(t => Some(t statPrincipal this))
   
-  def modificarStats(hp: Double, fuerza: Double, velocidad: Double ,inteligencia: Double): Heroe = {
+  def modificarStats(hp: Double, fuerza: Double, velocidad: Double ,inteligencia: Double) = {
      copy(HPBase + hp, fuerzaBase + fuerza, velocidadBase + velocidad, inteligenciaBase + inteligencia)
   }
   
@@ -34,6 +31,6 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   def agregarRecompensaStats(r: StatsRecompensa): Heroe = 
     modificarStats(r.HP, r.fuerza, r.velocidad, r.inteligencia).actualizarEstado
   
-  def actualizarEstado: Heroe = copy(inventario = inventario.actualizarInventario(this))
+  def actualizarEstado = copy(inventario = inventario.actualizarInventario(this))
    
 }
