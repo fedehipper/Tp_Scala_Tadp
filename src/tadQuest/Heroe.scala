@@ -15,9 +15,7 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   
   def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
-    
-  def cantidadItems: Double = inventario.cantidadItems
-  
+      
   def desequipar(item: Item) = copy(inventario = inventario.desequipar(item))
    
   def statPrincipal = job.fold(None: Option[Double])(t => Some(t statPrincipal this))
@@ -31,6 +29,6 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   def agregarRecompensaStats(r: StatsRecompensa): Heroe = 
     modificarStats(r.HP, r.fuerza, r.velocidad, r.inteligencia).actualizarEstado
   
-  def actualizarEstado: Heroe = copy(inventario = inventario.actualizarInventario(this))
+  def actualizarEstado = copy(inventario = inventario.actualizarInventario(this))
    
 }

@@ -75,7 +75,7 @@ object Dedicacion extends Item(Talisman, 40) {
 }
 
 object Minimalismo extends Item(Talisman, 5) {
-  override def HP(heroe: Heroe, valor: Double) = valor + 50 - (heroe.cantidadItems - 1) * 10
+  override def HP(heroe: Heroe, valor: Double) = valor + 50 - (heroe.inventario.cantidadItems - 1) * 10
 }
 
 object Maldito extends Item(Talisman, 100) {  
