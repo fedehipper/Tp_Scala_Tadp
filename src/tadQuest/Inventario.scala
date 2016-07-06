@@ -13,7 +13,7 @@ case class Inventario(items: List[Item] = Nil) {
         case Cabeza => equiparItem(item, _.sector eq Cabeza)
         case Armadura => equiparItem(item, _.sector eq Armadura)
         case ArmaSimple => equiparArmaSimple(item)
-        case ArmaDoble => equiparItem(item, i => i.sector == ArmaSimple | i.sector == ArmaDoble)
+        case ArmaDoble => equiparItem(item, i => i.sector == ArmaSimple || i.sector == ArmaDoble)
         case Talisman => equiparItem(item, i => false)
       }
     }
