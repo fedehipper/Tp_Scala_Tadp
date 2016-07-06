@@ -1,37 +1,37 @@
 package tadQuest
+import scala.util.{Try, Failure, Success}
 
+abstract class TareaFallida extends Exception
+case class TareaFallidaUno(equipo: Equipo) extends TareaFallida 
+case class TareaFallidaDos(equipo: Equipo, tarea: Tarea) extends TareaFallida
+ 
 trait Exito {
   def map(f: Equipo => Equipo): Exito
   def toOption: Option[Equipo]
-  def isSuccess: Boolean
+  def isSuccess: Boolean = true
   def get: Equipo
+  def isFailure: Boolean
 }
 
-case class SuccessPrimera(equipo: Equipo) extends Exito {
-  def map(f:Equipo => Equipo): Exito = SuccessPrimera(f(equipo))
+case class SuccessConFallida(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo) = SuccessConFallida(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
-  def isSuccess: Boolean = true
   def get: Equipo = equipo
+  def isFailure: Boolean = false
 }
-
-case class SuccessSegunda(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo): Exito = SuccessSegunda(f(equipo))
+case class SuccessSinFallida(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo) = SuccessSinFallida(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
-  def isSuccess: Boolean = true
   def get: Equipo = equipo
+  def isFailure: Boolean = false
 }
-
-case class FallidoPor(caso: CasoFallo) extends Exito {
-  def map(f: Equipo => Equipo): Exito = this
-  def toOption: Option[Equipo] = None
-  def isSuccess: Boolean = false
-  def get: Equipo = throw new NoSuchElementException("None.get")
+case class Fallo(tareaFallida: TareaFallida) extends Exito {
+  def map(f: Equipo => Equipo) = this
+  override def toOption: Option[Equipo] = None
+  override def isSuccess: Boolean = false
+  def get = throw new Exception(tareaFallida)
+  def isFailure: Boolean = true
 }
-
-trait CasoFallo
-case class PrimeraVes(equipo: Equipo) extends CasoFallo
-case class TareaFallida(equipo: Equipo, tarea: Tarea) extends CasoFallo
-
 
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
@@ -73,24 +73,27 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Exito =
-    mision.tareas.foldLeft(SuccessPrimera(this): Exito)((resultadoAnterior, tarea) => {
+  def realizarMision(mision: Mision): Exito = 
+    mision.tareas.foldLeft(SuccessSinFallida(this): Exito)((resultadoAnterior, tarea) => {
       resultadoAnterior match {
-        case FallidoPor(cantidad) => cantidad match {
-          case PrimeraVes(equipo) => SuccessSegunda(equipo)
-          case TareaFallida(equipo, tareaFallida) => FallidoPor(TareaFallida(equipo, tareaFallida))
+        case Fallo(tareaFallida) => tareaFallida match {
+          case TareaFallidaDos(equipo, tarea) => Fallo(TareaFallidaDos(equipo, tarea)) 
+          case TareaFallidaUno(equipo) => SuccessConFallida(equipo)
         }
-        case SuccessPrimera(equipo) => 
-          postTarea(equipo, tarea).fold(FallidoPor(PrimeraVes(equipo)): Exito)(SuccessPrimera(_))
-        
-        case SuccessSegunda(equipo) => 
-          postTarea(equipo, tarea).fold(FallidoPor(TareaFallida(equipo, tarea)): Exito)(SuccessSegunda(_))
+        case SuccessConFallida(equipo) =>
+          postTarea(equipo, tarea).fold(Fallo(TareaFallidaDos(equipo, tarea)): Exito)(SuccessConFallida(_))
+        case SuccessSinFallida(equipo) => 
+          postTarea(equipo, tarea).fold(Fallo(TareaFallidaUno(equipo)): Exito)(SuccessSinFallida(_))
       }
-  }).map(_.cobrarRecompensa(mision))
-
+  }) match {
+    case Fallo(tareaFallida) => Fallo(tareaFallida)
+    case SuccessConFallida(equipo) => SuccessConFallida(equipo)
+    case SuccessSinFallida(equipo) => SuccessSinFallida(equipo).map(_ cobrarRecompensa(mision))    
+  }
+ 
   def postTarea(equipo: Equipo, tarea: Tarea) = {
     for {heroe <- equipo elMejorPuedeRealizar tarea} 
-    yield equipo reemplazar(heroe, heroe realizarTarea tarea)
+    yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
   }
   
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
