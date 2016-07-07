@@ -10,30 +10,31 @@ case class Inventario(items: List[Item] = Nil) {
   def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
     if(item cumpleCondicion heroe) {
       val equipamientoDe = item.sector match {    
-        case Cabeza => equiparItem(_.sector == Cabeza) _
-        case Armadura => equiparItem(_.sector == Armadura) _
         case ArmaSimple => equiparArmaSimple _
-        case ArmaDoble => equiparItem(i => i.sector == ArmaSimple || i.sector == ArmaDoble) _
-        case Talisman => equiparItem(i => false) _
+        case ArmaDoble => equiparArmaDoble _
+        case _ => equiparSimple _
       }
-      equipamientoDe (item)
+      equipamientoDe(item)
     }
     else throw NoSePudoEquiparUnItem
   )
   
-  def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
+  def equiparSimple(item: Item) = item.sector match{
+    case Talisman => copy(item :: items)
+    case _ => copy(item :: items.filterNot( _ == item.sector))
+  }
   
-  def equiparItem(condicion: Item => Boolean)(item: Item) = copy(item :: items.filterNot(condicion))
+  def equiparArmaDoble(item: Item) = copy(item :: items.filterNot(i => i.sector == ArmaSimple || i.sector == ArmaDoble))
   
   def equiparArmaSimple(item: Item) = {
-    val armas = items.filter(_.sector == ArmaSimple)
-    val armaDoble = items.filter(_.sector == ArmaDoble)
-    if (armaDoble.size < 1) {
-      if (armas.size < 2) equiparItem(i => false)(item)
-      else copy(item :: armas.head :: items.filterNot(_.sector == ArmaSimple))
+    val armasSimples = items.filter(_.sector == ArmaSimple)
+    if (items.exists(_.sector == ArmaDoble)) copy(item:: items.filterNot(_.sector == ArmaDoble))
+    else {
+      if (armasSimples.size < 2) copy(item :: items)
+      else copy(item :: armasSimples.head :: items.filterNot(_.sector == ArmaSimple))
     }
-    else equiparItem(_.sector == ArmaDoble)(item)
   }
+  
 
   def desequipar(item: Item) = copy(items.filterNot(_ == item))
   
@@ -41,10 +42,13 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
-  def fuerzaFinal = valorDeItems( _ fuerza(_,_)) (_, _)
+  def fuerzaFinal = valorDeItems( _ fuerza(_,_))(_, _)
   def HPFinal = valorDeItems(_ HP(_, _))(_, _)
-  def velocidadFinal = valorDeItems(_ velocidad(_, _)) (_, _)
-  def inteligenciaFinal = valorDeItems(_ inteligencia(_, _)) (_, _)
+  def velocidadFinal = valorDeItems(_ velocidad(_, _))(_, _)
+  def inteligenciaFinal = valorDeItems(_ inteligencia(_, _))(_, _)
   
   def cantidadItems = items.size
+  
+  def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
+  
 }
