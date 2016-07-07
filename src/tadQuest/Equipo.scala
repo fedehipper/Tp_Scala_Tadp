@@ -46,15 +46,15 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
  
   def maximo = heroes.map(_: Heroe => Double).max
   
-  def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) equals maximo(cuantificador))
+  def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) == maximo(cuantificador))
   
-  def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
+  def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
-  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa): Equipo = {
+  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa) = {
     copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
   }
  
-  def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
+  def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
   def obtenerItem(item: Item): Equipo = {
     val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
@@ -64,7 +64,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     equipoConItem.getOrElse(incrementarPozo(item.precio))
   }
   
-  def equiparATodos(item: Item): Equipo = copy(heroes = heroes.map(_.equipar(item)))
+  def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
     for {facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad)}
@@ -73,8 +73,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Exito = 
-    mision.tareas.foldLeft(SuccessSinFallida(this): Exito)((resultadoAnterior, tarea) => {
+  def realizarMision(mision: Mision): Exito = { 
+    val resultadoRealizar: Exito =  mision.tareas.foldLeft(SuccessSinFallida(this): Exito)((resultadoAnterior, tarea) => {
       resultadoAnterior match {
         case Fallo(tareaFallida) => tareaFallida match {
           case TareaFallidaDos(equipo, tarea) => Fallo(TareaFallidaDos(equipo, tarea)) 
@@ -85,10 +85,12 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
         case SuccessSinFallida(equipo) => 
           postTarea(equipo, tarea).fold(Fallo(TareaFallidaUno(equipo)): Exito)(SuccessSinFallida(_))
       }
-  }) match {
-    case Fallo(tareaFallida) => Fallo(tareaFallida)
-    case SuccessConFallida(equipo) => SuccessConFallida(equipo)
-    case SuccessSinFallida(equipo) => SuccessSinFallida(equipo).map(_ cobrarRecompensa(mision))    
+    }) 
+    resultadoRealizar match {
+      case Fallo(tareaFallida) => Fallo(tareaFallida)
+      case SuccessConFallida(equipo) => SuccessConFallida(equipo)
+      case SuccessSinFallida(equipo) => SuccessSinFallida(equipo).map(_ cobrarRecompensa(mision))    
+    }
   }
  
   def postTarea(equipo: Equipo, tarea: Tarea) = {

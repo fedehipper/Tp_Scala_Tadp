@@ -1,22 +1,22 @@
 package tadQuest
 
-abstract class Trabajo(val _HP: Double = 0, val _fuerza: Double = 0, 
-    val _velocidad: Double = 0, val _inteligencia: Double = 0) {
+abstract class Trabajo(val tHP: Double = 0, val tFuerza: Double = 0, 
+    val tVelocidad: Double = 0, val tInteligencia: Double = 0) {
   
-  def fuerza = (_:Double) + _fuerza
-  def HP = (_:Double) + _HP
-  def velocidad = (_:Double) + _velocidad
-  def inteligencia = (_:Double) + _inteligencia
+  def fuerza = (_:Double) + tFuerza
+  def HP = (_:Double) + tHP
+  def velocidad = (_:Double) + tVelocidad
+  def inteligencia = (_:Double) + tInteligencia
   
   def statPrincipal(heroe: Heroe): Double
 }
 
-case object Guerrero extends Trabajo(_HP = 10, _fuerza = 15, _inteligencia = -10) {
+case object Guerrero extends Trabajo(tHP = 10, tFuerza = 15, tInteligencia = -10) {
   def statPrincipal(heroe: Heroe) = heroe.fuerzaFinal
 }
-case object Mago extends Trabajo(_fuerza = 20, _inteligencia = 20) {
+case object Mago extends Trabajo(tFuerza = 20, tInteligencia = 20) {
   def statPrincipal(heroe: Heroe) = heroe.inteligenciaFinal
 }
-case object Ladron extends Trabajo (_HP = -5, _velocidad = 10) {
+case object Ladron extends Trabajo (tHP = -5, tVelocidad = 10) {
   def statPrincipal(heroe: Heroe) = heroe.velocidadFinal
 }
