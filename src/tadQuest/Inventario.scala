@@ -37,15 +37,14 @@ case class Inventario(items: List[Item] = Nil) {
 
   def desequipar(item: Item) = copy(items.filterNot(_ == item))
   
-  def valorDeItems(valor: Double, i: (Item, Heroe, Double) => Double)(heroe: Heroe) = {
+  def valorDeItems(i: (Item, Heroe, Double) => Double)(heroe: Heroe, valor: Double) = {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
-  // aplico valorDeItems y la retorno parcialmente aplicada, faltaria llamarla con el heroe
-  def fuerzaFinal = valorDeItems(_:Double , _ fuerza(_,_)) _
-  def HPFinal = valorDeItems(_:Double , _ HP(_, _)) _
-  def velocidadFinal = valorDeItems(_:Double , _ velocidad(_, _)) _
-  def inteligenciaFinal = valorDeItems(_:Double , _ inteligencia(_, _)) _
+  def fuerzaFinal = valorDeItems( _ fuerza(_,_)) (_, _)
+  def HPFinal = valorDeItems(_ HP(_, _))(_, _)
+  def velocidadFinal = valorDeItems(_ velocidad(_, _)) (_, _)
+  def inteligenciaFinal = valorDeItems(_ inteligencia(_, _)) (_, _)
   
   def cantidadItems = items.size
 }

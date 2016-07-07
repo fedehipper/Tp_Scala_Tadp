@@ -26,7 +26,7 @@ object EspadaDeLaVida extends Item(ArmaSimple, 20) {
 object EscudoAntiRobo extends Item(ArmaSimple, 30) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Some(Ladron) => false
-    case _ => heroe.fuerzaBase >= 20
+    case _ => heroe.fuerza >= 20
   }
   override def HP(heroe: Heroe, valor: Double) = valor + 20
 }
@@ -34,7 +34,7 @@ object EscudoAntiRobo extends Item(ArmaSimple, 30) {
 object PalitoMagico extends Item(ArmaSimple, 25) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Some(Mago) => true
-    case Some(Ladron) => heroe.inteligenciaBase > 30
+    case Some(Ladron) => heroe.inteligencia > 30
     case _ => false
   }
   override def inteligencia(heroe: Heroe, valor: Double) = valor + 20
@@ -45,7 +45,7 @@ object ArcoViejo extends Item(ArmaDoble, 15) {
 }
 
 object CascoVikingo extends Item(Cabeza, 5) {
-  override def cumpleCondicion(heroe: Heroe) = heroe.fuerzaBase > 30
+  override def cumpleCondicion(heroe: Heroe) = heroe.fuerza > 30
   override def HP(heroe: Heroe, valor: Double) = valor + 10
 }
 
@@ -53,16 +53,16 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, 50) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job.isEmpty
   
   override def inteligencia(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30 else valor
+    if(heroe.fuerza > heroe.inteligencia) valor + 30 else valor
   }
   override def HP(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 else valor
+    if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
   }
   override def fuerza(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 else valor
+    if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
   }
   override def velocidad(heroe: Heroe, valor: Double) = {
-    if(heroe.fuerzaBase <= heroe.inteligenciaBase) valor + 10 else valor
+    if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
   }
 }
 
