@@ -5,12 +5,12 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   
   def statTrabajo(base: Double, delta: (Trabajo, Double) => Double) = job.fold(base)(delta(_, base))
   
-  def fuerzaFinal = mayorAUno(inventario.fuerzaFinal(this, statTrabajo(fuerzaBase, _ fuerza _ )))
-  def HPFinal = mayorAUno(inventario.HPFinal(this, statTrabajo(HPBase, _ HP _)))
-  def velocidadFinal = mayorAUno(inventario.velocidadFinal(this, statTrabajo(velocidadBase,  _ velocidad _ )))
-  def inteligenciaFinal = mayorAUno(inventario.inteligenciaFinal(this, statTrabajo(inteligenciaBase, _ inteligencia _ )))
+  def fuerzaFinal = mayorAUno(inventario.fuerzaFinal(statTrabajo(fuerzaBase, _ fuerza _))(this))
+  def HPFinal = mayorAUno(inventario.HPFinal(statTrabajo(HPBase, _ HP _))(this))
+  def velocidadFinal = mayorAUno(inventario.velocidadFinal(statTrabajo(velocidadBase,  _ velocidad _))(this))
+  def inteligenciaFinal = mayorAUno(inventario.inteligenciaFinal(statTrabajo(inteligenciaBase, _ inteligencia _))(this))
   
-  def mayorAUno = (_:Double) max 1
+  def mayorAUno = (_:Double) max 1 
   
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   

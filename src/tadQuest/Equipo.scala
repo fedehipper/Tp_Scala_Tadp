@@ -22,10 +22,10 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
   def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa) = {
-    copy(heroes = heroes.filter(condicion(_)).map(_ agregarRecompensaStats recompensa))
+    copy(heroes = heroes filter(condicion(_)) map(_ agregarRecompensaStats recompensa))
   }
  
-  def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
+  def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
   def obtenerItem(item: Item): Equipo = {
     val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
