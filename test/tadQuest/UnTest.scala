@@ -181,7 +181,7 @@ class UnTest  {
 
   @Test
   def mejorHeroeSegun() = {
-    assertEquals(equipito.mejorHeroeSegun(_.HPBase).get, ironMan.asignarTrabajo(Mago))
+    assertEquals(equipito.mejorHeroeSegun(_.HP).get, ironMan.asignarTrabajo(Mago))
   }
 
   @Test

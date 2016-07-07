@@ -13,7 +13,7 @@ case object PelearContraMonstruo extends Tarea {
     facilidad.orElse(Some(h => 10))
   }
   override def afectar(heroe: Heroe) = {
-    if(heroe.fuerzaFinal < 20) heroe.modificarStats(-10, 0, 0, 0)
+    if(heroe.fuerzaFinal < 20) heroe.modificarStats(IncrementoStats(-10, 0, 0, 0))
     else heroe
   }
 }
@@ -27,7 +27,7 @@ case object ForzarPuerta extends Tarea {
     val tieneTrabajo = for{trabajo <- heroe.job
       if List(Mago, Ladron).contains(trabajo)
     } yield heroe
-    tieneTrabajo.getOrElse(heroe.modificarStats(-5, 1, 0, 0))
+    tieneTrabajo.getOrElse(heroe.modificarStats(IncrementoStats(-5, 1, 0, 0)))
   }
 }
 
@@ -44,7 +44,7 @@ case object MatarAlDragon extends Tarea {
     if (equipo.heroes.size > 5) Some(_.fuerzaFinal * 50)
     else Some(_.fuerzaFinal * 10)
   }
-  override def afectar(heroe: Heroe) = heroe.modificarStats(1000, 1000, 1000, 1000)
+  override def afectar(heroe: Heroe) = heroe.modificarStats(IncrementoStats(1000, 1000, 1000, 1000))
 }
 
 
