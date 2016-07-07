@@ -9,7 +9,7 @@ case class Inventario(items: List[Item] = Nil) {
    
   def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
     if(item cumpleCondicion heroe) {
-      val equipamientoDe = item sector match {    
+      val equipamientoDe = item.sector match {    
         case Cabeza => equiparItem(_.sector == Cabeza) _
         case Armadura => equiparItem(_.sector == Armadura) _
         case ArmaSimple => equiparArmaSimple _
@@ -41,6 +41,7 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
+  // aplico valorDeItems y la retorno parcialmente aplicada, faltaria llamarla con el heroe
   def fuerzaFinal = valorDeItems(_:Double , _ fuerza(_,_)) _
   def HPFinal = valorDeItems(_:Double , _ HP(_, _)) _
   def velocidadFinal = valorDeItems(_:Double , _ velocidad(_, _)) _
