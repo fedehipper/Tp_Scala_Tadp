@@ -45,10 +45,10 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
-  def fuerzaFinal = valorDeItems( _ fuerza(_,_))(_, _)
-  def HPFinal = valorDeItems(_ HP(_, _))(_, _)
-  def velocidadFinal = valorDeItems(_ velocidad(_, _))(_, _)
-  def inteligenciaFinal = valorDeItems(_ inteligencia(_, _))(_, _)
+  def fuerzaFinal = valorDeItems( _ fuerza(_,_)) _
+  def HPFinal = valorDeItems(_ HP(_, _)) _
+  def velocidadFinal = valorDeItems(_ velocidad(_, _)) _
+  def inteligenciaFinal = valorDeItems(_ inteligencia(_, _)) _
   
   def cantidadItems = items.size
   
