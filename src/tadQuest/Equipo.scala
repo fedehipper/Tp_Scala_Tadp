@@ -51,7 +51,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
         case Success(equipo) => 
           postTarea(equipo, tarea).fold(Failure(TareaFallida(equipo, tarea)): Try[Equipo])(Success(_))
       }
-    }).map(_ cobrarRecompensa mision)
+    }
+  ).map(_ cobrarRecompensa mision)
 
   def postTarea(equipo: Equipo, tarea: Tarea): Option[Equipo] = {
     for (heroe <- equipo elMejorPuedeRealizar tarea) 
