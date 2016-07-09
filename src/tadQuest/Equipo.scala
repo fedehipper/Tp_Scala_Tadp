@@ -1,9 +1,7 @@
 package tadQuest
 import scala.util.{Try, Failure, Success}
 
-abstract class TareaFallida extends Exception
-case class TareaFallidaUno(equipo: Equipo) extends TareaFallida 
-case class TareaFallidaDos(equipo: Equipo, tarea: Tarea) extends TareaFallida
+case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception
  
 trait Exito {
   def map(f: Equipo => Equipo): Exito
@@ -13,19 +11,19 @@ trait Exito {
   def isFailure: Boolean
 }
 
-case class SuccessConFallida(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo) = SuccessConFallida(f(equipo))
+case class FalloUnaVes(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo) = FalloUnaVes(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
   def get: Equipo = equipo
   def isFailure: Boolean = false
 }
-case class SuccessSinFallida(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo) = SuccessSinFallida(f(equipo))
+case class SuccessTarea(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo) = SuccessTarea(f(equipo))
   def toOption: Option[Equipo] = Some(equipo)
   def get: Equipo = equipo
   def isFailure: Boolean = false
 }
-case class Fallo(tareaFallida: TareaFallida) extends Exito {
+case class FalloDosVeces(tareaFallida: TareaFallida) extends Exito {
   def map(f: Equipo => Equipo) = this
   override def toOption: Option[Equipo] = None
   override def isSuccess: Boolean = false
@@ -74,22 +72,19 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): Exito = { 
-    val resultadoRealizar: Exito =  mision.tareas.foldLeft(SuccessSinFallida(this): Exito)((resultadoAnterior, tarea) => {
+    val resultadoRealizar: Exito =  mision.tareas.foldLeft(SuccessTarea(this): Exito)((resultadoAnterior, tarea) => {
       resultadoAnterior match {
-        case Fallo(tareaFallida) => tareaFallida match {
-          case TareaFallidaDos(equipo, tarea) => Fallo(TareaFallidaDos(equipo, tarea)) 
-          case TareaFallidaUno(equipo) => SuccessConFallida(equipo)
-        }
-        case SuccessConFallida(equipo) =>
-          postTarea(equipo, tarea).fold(Fallo(TareaFallidaDos(equipo, tarea)): Exito)(SuccessConFallida(_))
-        case SuccessSinFallida(equipo) => 
-          postTarea(equipo, tarea).fold(Fallo(TareaFallidaUno(equipo)): Exito)(SuccessSinFallida(_))
+        case FalloDosVeces(tarea) => FalloDosVeces(tarea)
+        case FalloUnaVes(equipo) => 
+          postTarea(equipo, tarea).fold(FalloDosVeces(TareaFallida(equipo, tarea)): Exito)(FalloUnaVes(_))
+        case SuccessTarea(equipo) => 
+          postTarea(equipo, tarea).fold(FalloUnaVes(equipo): Exito)(SuccessTarea(_))
       }
     }) 
     resultadoRealizar match {
-      case Fallo(tareaFallida) => Fallo(tareaFallida)
-      case SuccessConFallida(equipo) => SuccessConFallida(equipo)
-      case SuccessSinFallida(equipo) => SuccessSinFallida(equipo).map(_ cobrarRecompensa(mision))    
+      case FalloDosVeces(tareaFallida) => FalloDosVeces(tareaFallida)
+      case FalloUnaVes(equipo) => FalloUnaVes(equipo)
+      case SuccessTarea(equipo) => SuccessTarea(equipo).map(_ cobrarRecompensa(mision))    
     }
   }
  

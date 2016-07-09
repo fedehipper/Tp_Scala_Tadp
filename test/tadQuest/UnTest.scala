@@ -324,10 +324,10 @@ class UnTest  {
   }
 
   @Test
-  def noPuedeRealizarMision() = {
+  def puedeRealizarMisionPorSerUnaTareaSolaLaQueFalla() = {
     val mision = new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))
     val taberna = new Taberna(List(mision))
-    assertEquals(taberna.elegirMision((e1, e2) => grupo.pozoComun > grupo.pozoComun, grupo), None)
+    assertTrue(taberna.elegirMision((e1, e2) => grupo.pozoComun > grupo.pozoComun, grupo).isDefined)
   }
 
   @Test
