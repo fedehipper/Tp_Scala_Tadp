@@ -34,7 +34,7 @@ case class Inventario(items: List[Item] = Nil) {
     val armasSimples = items.filter(_.sector == ArmaSimple)
     if (items.exists(_.sector == ArmaDoble)) copy(item:: items.filterNot(_.sector == ArmaDoble))
     else {
-      if (armasSimples.size < 2) agregarItem(item)
+      if (armasSimples.size < 2 && armasSimples.isEmpty) agregarItem(item)
       else copy(item :: armasSimples.head :: items.filterNot(_.sector == ArmaSimple))
     }
   }
