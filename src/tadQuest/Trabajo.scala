@@ -14,7 +14,7 @@ abstract class Trabajo(val tHP: Double = 0, val tFuerza: Double = 0,
 case object Guerrero extends Trabajo(tHP = 10, tFuerza = 15, tInteligencia = -10) {
   def statPrincipal(heroe: Heroe) = heroe.fuerzaFinal
 }
-case object Mago extends Trabajo(tFuerza = 20, tInteligencia = 20) {
+case object Mago extends Trabajo(tFuerza = -20, tInteligencia = 20) {
   def statPrincipal(heroe: Heroe) = heroe.inteligenciaFinal
 }
 case object Ladron extends Trabajo (tHP = -5, tVelocidad = 10) {
