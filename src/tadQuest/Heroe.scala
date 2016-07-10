@@ -5,11 +5,11 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
   
   def statTrabajo(stat: Double, incremento: (Trabajo, Double) => Double) = job.fold(stat)(incremento(_, stat))
   
-  def fuerzaFinal = inventario.fuerzaFinal(this, statTrabajo(fuerza, _ fuerza _)) max 1
-  def HPFinal = inventario.HPFinal(this, statTrabajo(HP, _ HP _)) max 1
-  def velocidadFinal = inventario.velocidadFinal(this, statTrabajo(velocidad,  _ velocidad _)) max 1
-  def inteligenciaFinal = inventario.inteligenciaFinal(this, statTrabajo(inteligencia, _ inteligencia _)) max 1
-    
+  def fuerzaFinal = inventario.fuerza(this, statTrabajo(fuerza, _ fuerza _)) max 1
+  def HPFinal = inventario.HP(this, statTrabajo(HP, _ HP _)) max 1
+  def velocidadFinal = inventario.velocidad(this, statTrabajo(velocidad,  _ velocidad _)) max 1
+  def inteligenciaFinal = inventario.inteligencia(this, statTrabajo(inteligencia, _ inteligencia _)) max 1
+      
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   
   def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
