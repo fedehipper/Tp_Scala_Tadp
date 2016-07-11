@@ -3,33 +3,35 @@ import scala.util.{Try, Failure, Success}
 
 case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception
  
-trait Exito {
-  def map(f: Equipo => Equipo): Exito
-  def toOption: Option[Equipo]
+
+trait ResultadoMision {
+  def map(f: Equipo => Equipo): ResultadoMision
+  def falloTarea(tarea: Tarea): ResultadoMision
+  def terminar(mision: Mision): ResultadoMision
   def isSuccess: Boolean = true
-  def get: Equipo
-  def isFailure: Boolean
+  def toOption: Option[Equipo] = if(isSuccess) Some(this.get) else None
+  def get : Equipo
+}
+case class CumpleMision(equipo: Equipo) extends ResultadoMision {
+  def map(f: Equipo => Equipo): ResultadoMision = CumpleMision(f(equipo))
+  def falloTarea(tarea: Tarea): ResultadoMision = CumpleMisionParcial(equipo)
+  def terminar(mision: Mision): ResultadoMision = this.map(_.cobrarRecompensa(mision))
+  def get = equipo
+}
+case class CumpleMisionParcial(equipo: Equipo) extends ResultadoMision {
+  def map(f: Equipo => Equipo): ResultadoMision = CumpleMisionParcial(f(equipo))
+  def falloTarea(tarea: Tarea): ResultadoMision = FallaMision(equipo,tarea)
+  def terminar(mision: Mision): ResultadoMision = this
+  def get = equipo
+}
+case class FallaMision(equipo: Equipo, tarea: Tarea) extends ResultadoMision {
+  def map(f: Equipo => Equipo): ResultadoMision = this
+  def falloTarea(tarea: Tarea): ResultadoMision = this
+  def terminar(mision: Mision): ResultadoMision = this
+  override def isSuccess: Boolean = false
+  def get = equipo
 }
 
-case class FalloUnaVes(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo) = FalloUnaVes(f(equipo))
-  def toOption: Option[Equipo] = Some(equipo)
-  def get: Equipo = equipo
-  def isFailure: Boolean = false
-}
-case class SuccessTarea(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo) = SuccessTarea(f(equipo))
-  def toOption: Option[Equipo] = Some(equipo)
-  def get: Equipo = equipo
-  def isFailure: Boolean = false
-}
-case class FalloDosVeces(tareaFallida: TareaFallida) extends Exito {
-  def map(f: Equipo => Equipo) = this
-  override def toOption: Option[Equipo] = None
-  override def isSuccess: Boolean = false
-  def get = throw new Exception(tareaFallida)
-  def isFailure: Boolean = true
-}
 
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
@@ -71,23 +73,15 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Exito = { 
-    val resultadoRealizar: Exito =  mision.tareas.foldLeft(SuccessTarea(this): Exito)((resultadoAnterior, tarea) => {
-      resultadoAnterior match {
-        case FalloDosVeces(tarea) => FalloDosVeces(tarea)
-        case FalloUnaVes(equipo) => 
-          postTarea(equipo, tarea).fold(FalloDosVeces(TareaFallida(equipo, tarea)): Exito)(FalloUnaVes(_))
-        case SuccessTarea(equipo) => 
-          postTarea(equipo, tarea).fold(FalloUnaVes(equipo): Exito)(SuccessTarea(_))
+  def realizarMision(mision: Mision): ResultadoMision = 
+    mision.tareas.foldLeft(CumpleMision(this): ResultadoMision)((anterior, tarea) => {
+      anterior match {
+        case FallaMision(_,_) => anterior
+        case _ => postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(equipo => anterior.map(_ => equipo))
       }
-    }) 
-    resultadoRealizar match {
-      case FalloDosVeces(tareaFallida) => FalloDosVeces(tareaFallida)
-      case FalloUnaVes(equipo) => FalloUnaVes(equipo)
-      case SuccessTarea(equipo) => SuccessTarea(equipo).map(_ cobrarRecompensa(mision))    
     }
-  }
- 
+  ).terminar(mision)
+
   def postTarea(equipo: Equipo, tarea: Tarea) = {
     for {heroe <- equipo elMejorPuedeRealizar tarea} 
     yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
