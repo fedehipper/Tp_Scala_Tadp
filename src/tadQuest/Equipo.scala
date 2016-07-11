@@ -1,8 +1,26 @@
 package tadQuest
 
-import scala.util.{Try, Failure, Success}
+trait Exito {
+  def map(f:Equipo => Equipo): Exito
+  def isSuccess: Boolean
+  def get: Equipo
+  def toOption: Option[Equipo] = if(isSuccess) Some(this.get) else None
+  def isFailure: Boolean
+}
 
-case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
+case class PudoRealizar(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo): Exito = PudoRealizar(f(equipo))
+  def isSuccess: Boolean = true
+  def get: Equipo = equipo
+  def isFailure: Boolean = false
+}
+
+case class NoPudoRealizar(equipo: Equipo, tarea: Tarea) extends Exito {
+  def map(f: Equipo => Equipo): Exito = this
+  def isSuccess: Boolean = false
+  def get: Equipo = equipo
+  def isFailure: Boolean = true
+}
 
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
@@ -29,27 +47,25 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def obtenerItem(item: Item): Equipo = {
     val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
-      if incrementoStat(heroe, item) > 0
-    }
+      if incrementoStat(heroe, item) > 0}
     yield reemplazar(heroe, heroe equipar item)
     equipoConItem.getOrElse(incrementarPozo(item.precio))
   }
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_ equipar item))
   
-  def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
-    for {facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad)}
+  def elMejorPuedeRealizar(tarea: Tarea) = {
+    for(facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad))
     yield elMejor
   }
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Try[Equipo] = 
-    mision.tareas.foldLeft(Success(this): Try[Equipo])((resultadoAnterior, tarea) => {
+  def realizarMision(mision: Mision): Exito = 
+    mision.tareas.foldLeft(PudoRealizar(this): Exito)((resultadoAnterior, tarea) => {
       resultadoAnterior match {
-        case Failure(_) => resultadoAnterior
-        case Success(equipo) => 
-          postTarea(equipo, tarea).fold(Failure(TareaFallida(equipo, tarea)): Try[Equipo])(Success(_))
+        case NoPudoRealizar(_, _) => resultadoAnterior
+        case PudoRealizar(equipo) => postTarea(equipo, tarea).fold(NoPudoRealizar(equipo, tarea): Exito)(PudoRealizar(_))
       }
     }
   ).map(_ cobrarRecompensa mision)
