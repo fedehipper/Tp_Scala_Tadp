@@ -1,8 +1,7 @@
 package tadQuest
 
 trait Recompensa {
-  type TiposRecompensa = Equipo => Equipo
-  def cobrar: TiposRecompensa
+  def cobrar: Equipo => Equipo
 }
 
 case class GanarOroParaElPozoComun(oro: Double) extends Recompensa {
