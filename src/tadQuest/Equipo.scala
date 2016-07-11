@@ -37,11 +37,11 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
   def miembrosConTrabajo = heroes.filter(_.job.isDefined)
-  def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
+  def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ == viejo))
   
   def lider: Option[Heroe] = {
-    if (miembrosConTrabajo.isEmpty) None
-    else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
+    if (miembrosConTrabajo.nonEmpty) copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
+    else None
   }
  
   def maximo = heroes.map(_: Heroe => Double).max
@@ -57,11 +57,10 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
   def obtenerItem(item: Item): Equipo = {
-    val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
-      if incrementoStat(heroe, item) > 0
-    }
+    val darAlMejor = for(heroe <- mejorHeroeSegun(incrementoStat(_, item))
+      if incrementoStat(heroe, item) > 0)
     yield reemplazar(heroe, heroe equipar item)
-    equipoConItem.getOrElse(incrementarPozo(item.precio))
+    darAlMejor.getOrElse(incrementarPozo(item.precio))
   }
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
