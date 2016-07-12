@@ -25,8 +25,11 @@ case class IncrementoStats(HP: Double = 0, fuerza: Double = 0, velocidad: Double
 
 class Mision(val tareas: List[Tarea], val recompensa: Recompensa) {
   def facilidad(equipo: Equipo) = {
-    val facil = for(tarea <- tareas; heroe <- equipo.elMejorPuedeRealizar(tarea))
-      yield tarea.facilidadPara(equipo).get (heroe)
+    val facil = for {
+      tarea <- tareas
+      heroe <- equipo elMejorPuedeRealizar tarea
+    }
+    yield tarea.facilidadPara(equipo).get (heroe)
     facil.sum
   }
 }
