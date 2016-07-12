@@ -11,26 +11,17 @@ object Main {
     val ironMan = new Heroe(50, 10, 40, 100)
     val capitanAmerica = new Heroe(70, 31, 60, 20)
     val wolverine = new Heroe(1000, 60, 50, 20)
-    val otroEquipo = new Equipo("otro", List(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo),
-      wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
-      kratos.equipar(VinchaDelBufaloDelAgua).equipar(ArcoViejo)))
-    
-    
+   
     val heroe = new Heroe(10, 20, 30, 40)
     val otro = new Heroe(1,2,3,4)
-    val equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
+    val equipo = new Equipo("vengadores_2", List(spiderman))
  
 
-    println(MatarAlDragon.facilidadPara(otroEquipo).get(heroe))
-    println(heroe.realizarTarea(MatarAlDragon))
-    println(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
-      PelearContraMonstruo),GanarOroParaElPozoComun(1000))))
+   
+    val mision = new Mision(List(PelearContraMonstruo, ForzarPuerta), GanarOroParaElPozoComun(1000))
+    println(mision.facilidad(equipo))
     
-    
-    
-    
-    
-    
+   
   }
   
   
