@@ -26,9 +26,9 @@ class Mision(val tareas: List[Tarea], val recompensa: Recompensa) {
   def facilidad(equipo: Equipo) = {
     val facil = for {
       tarea <- tareas
-      heroe <- equipo elMejorPuedeRealizar tarea
-    }
-    yield tarea.facilidadPara(equipo).get (heroe)
+      heroe <- equipo.elMejorPuedeRealizar(tarea)
+      if equipo.elMejorPuedeRealizar(tarea).isDefined
+    } yield tarea.facilidadPara(equipo).get (heroe)
     facil.sum
   }
 }
