@@ -350,6 +350,8 @@ class UnTest  {
     val taberna = new Taberna(List(mision1, mision2))
     assertEquals(grupo.entrenar(taberna, (_, _) => grupo.pozoComun > grupo.pozoComun).pozoComun, 150, 0.01)
   }
+  
+  
 
 
 

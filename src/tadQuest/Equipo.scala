@@ -96,18 +96,5 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     resultadoEntrenar.getOrElse(equipo)
   }
   
-  def elegirItem(items: List[Item], criterio: (Equipo, Equipo) => Boolean, mision: Mision): Item = {
-    items.foldLeft(items.head)((unItem, otroItem) => {
-      var estado1 = obtenerItem(unItem).realizarMision(mision)
-      var estado2 = obtenerItem(otroItem).realizarMision(mision)
-     (estado1, estado2) match {
-        case (FallaMision(_, _), FallaMision(_, _)) => otroItem  
-        case (FallaMision(_, _), _) => otroItem
-        case (_, FallaMision(_, _)) => unItem  
-        case _ => if(criterio(estado1.get, estado2.get)) unItem else otroItem
-      }
-    })
-  }
-  
  
 }
