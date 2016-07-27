@@ -7,7 +7,7 @@ object NoSePudoEquiparUnItem extends Exception
 
 case class Inventario(items: List[Item] = Nil) {
    
-  def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
+  def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try (
     if(item cumpleCondicion heroe) {
       val equipamientoDe = item.sector match {    
         case ArmaDoble => equiparArmaDoble _
