@@ -42,8 +42,8 @@
   </dependencies>
   
   <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <sourceDirectory>src/main</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
     <resources>
       <resource>
         <directory>src/scala</directory>
