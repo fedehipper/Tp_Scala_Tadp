@@ -74,6 +74,6 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, precio = 50) {
 }
 
 object EspadaDeLaVida extends Item(ArmaSimple, precio = 20) {
-  override def fuerza(heroe: Heroe, valor: Double) = heroe.HPFinal
+  override def fuerza(heroe: Heroe, valor: Double) = heroe.stat(HPFinal)
 }
 
