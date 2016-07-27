@@ -1,5 +1,4 @@
 package tadQuest
-import scala.util.{Try, Failure, Success}
 
 case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception
  

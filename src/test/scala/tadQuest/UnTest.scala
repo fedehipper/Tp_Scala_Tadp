@@ -1,37 +1,36 @@
 package tadQuest
 
 import org.junit.{Test, Before}
-import org.junit.Assert._
 import scala.util.{Try, Failure}
 import org.junit.Assert._
 
 class UnTest  {
 
-  var spiderman:Heroe = null
-  var ironMan:Heroe = null
-  var capitanAmerica:Heroe = null
-  var wolverine:Heroe = null
-  var kratos: Heroe = null
-  var equipo: Equipo = null
-  var otroEquipo: Equipo = null
-  var equipito: Equipo = null
-  var equipo2: Equipo = null
-  var icaros: Heroe = null
-  var grupo: Equipo = null
+  var spiderman:Heroe = _
+  var ironMan:Heroe = _
+  var capitanAmerica:Heroe = _
+  var wolverine:Heroe = _
+  var kratos: Heroe = _
+  var equipo: Equipo = _
+  var otroEquipo: Equipo = _
+  var equipito: Equipo = _
+  var equipo2: Equipo = _
+  var icaros: Heroe = _
+  var grupo: Equipo = _
 
   @Before
   def setup() = {
-    grupo = new Equipo("equipo", List(new Heroe(1,1,1,1), new Heroe(2,0,0,0)))
-    kratos = new Heroe(50, 45, 10, 10)
-    icaros = new Heroe(50000, 1, 10000, 10000)
-    spiderman = new Heroe(10, 35, 60, 40)
-    ironMan = new Heroe(50, 10, 40, 100)
-    capitanAmerica = new Heroe(70, 31, 60, 20)
-    wolverine = new Heroe(1000, 60, 50, 20)
-    equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
-    equipo2 = new Equipo("Konami", List(icaros.asignarTrabajo(Guerrero), spiderman))
-    equipito = new Equipo("", List(spiderman.asignarTrabajo(Guerrero), ironMan.asignarTrabajo(Mago)))
-    otroEquipo = new Equipo("otro", List(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo),
+    grupo = Equipo("equipo", List(Heroe(1,1,1,1), Heroe(2,0,0,0)))
+    kratos = Heroe(50, 45, 10, 10)
+    icaros = Heroe(50000, 1, 10000, 10000)
+    spiderman = Heroe(10, 35, 60, 40)
+    ironMan = Heroe(50, 10, 40, 100)
+    capitanAmerica = Heroe(70, 31, 60, 20)
+    wolverine = Heroe(1000, 60, 50, 20)
+    equipo = Equipo("vengadores_2", List(spiderman, ironMan))
+    equipo2 = Equipo("Konami", List(icaros.asignarTrabajo(Guerrero), spiderman))
+    equipito = Equipo("", List(spiderman.asignarTrabajo(Guerrero), ironMan.asignarTrabajo(Mago)))
+    otroEquipo = Equipo("otro", List(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo),
       wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
       kratos.equipar(VinchaDelBufaloDelAgua).equipar(ArcoViejo)))
   }
@@ -213,14 +212,13 @@ class UnTest  {
 
   @Test
   def obtenerItemYVender() = {
-    val unEquipo = new Equipo("equipo", List(new Heroe(0,0,0,0).asignarTrabajo(Guerrero),
-      new Heroe(0,0,0,0).asignarTrabajo(Mago)))
+    val unEquipo = Equipo("equipo", List(Heroe(0,0,0,0).asignarTrabajo(Guerrero), Heroe(0,0,0,0).asignarTrabajo(Mago)))
     assertEquals(unEquipo.obtenerItem(ArcoViejo).heroes.filter(_.HPFinal == 10).head.fuerzaFinal, 17, 0.01)
   }
 
   @Test
   def obtenerItemYAsignarloAlMejorHeroe() = {
-    val unEquipo = new Equipo("equipo", List(new Heroe(0,0,0,0).asignarTrabajo(Guerrero).equipar(Maldito)))
+    val unEquipo = Equipo("equipo", List(Heroe(0,0,0,0).asignarTrabajo(Guerrero).equipar(Maldito)))
     assertEquals(unEquipo.obtenerItem(ArcoViejo).pozoComun, 15, 0.01)
   }
 
@@ -242,49 +240,43 @@ class UnTest  {
 
   @Test
   def heroeTieneFacilidadDePelearContraMonstruo() = {
-    val unEquipo = new Equipo("equipo", List(spiderman, wolverine))
+    val unEquipo = Equipo("equipo", List(spiderman, wolverine))
     assertEquals(PelearContraMonstruo.facilidadPara(unEquipo).get(spiderman), 10, 0.01)
   }
 
   @Test
   def heroeTieneFacilidadDePelearContraMonstruoYEsLiderGuerrero() = {
-    val unEquipo = new Equipo("equipo", List(spiderman, wolverine.asignarTrabajo(Guerrero)))
+    val unEquipo = Equipo("equipo", List(spiderman, wolverine.asignarTrabajo(Guerrero)))
     assertEquals(PelearContraMonstruo.facilidadPara(unEquipo).get(wolverine.asignarTrabajo(Guerrero)), 20, 0.01)
   }
 
   @Test
   def heroeQueNoEsElLiderPeleaContraMonstruo() = {
-    val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
+    val unEquipo = Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
     assertEquals(PelearContraMonstruo.facilidadPara(unEquipo).get(wolverine.asignarTrabajo(Mago)), 10, 0.01)
   }
 
   @Test
   def heroeFuerzaPuertaEquipoHayUnLadron() = {
-    val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
+    val unEquipo = Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
     assertEquals(ForzarPuerta.facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Ladron)), 50, 0.01)
   }
 
   @Test
   def heroeFuerzaPuertaEquipoSinLadron() = {
-    val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Guerrero), wolverine.asignarTrabajo(Mago)))
+    val unEquipo = Equipo("equipo", List(spiderman.asignarTrabajo(Guerrero), wolverine.asignarTrabajo(Mago)))
     assertEquals(ForzarPuerta.facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Guerrero)), 30, 0.01)
   }
 
   @Test
-  def facilidadDeHeroeQueRobaTalismanSiEquipoSiTieneLiderDefinido() = {
-    val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
-    assertEquals(RobarTalisman(Maldito).facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Ladron)), 70, 0.01)
-  }
-
-  @Test
   def facilidadDeHereoQueRobaTalismanSiEquipoTieneLiderQueNoEsLadron() = {
-    val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Mago), wolverine.asignarTrabajo(Mago)))
+    val unEquipo = Equipo("equipo", List(spiderman.asignarTrabajo(Mago), wolverine.asignarTrabajo(Mago)))
     assertEquals(RobarTalisman(Maldito).facilidadPara(unEquipo), None)
   }
 
   @Test
   def facilidadDeHeroeQueRobaTalismanSiEquipoNoTieneLiderDefinido() = {
-    val unEquipo = new Equipo("equipo", List(spiderman, wolverine))
+    val unEquipo = Equipo("equipo", List(spiderman, wolverine))
     assertEquals(RobarTalisman(Maldito).facilidadPara(unEquipo), None)
   }
 
@@ -319,21 +311,21 @@ class UnTest  {
   def testElegirMision() = {
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
-    val taberna = new Taberna(List(mision1, mision2))
+    val taberna = Taberna(List(mision1, mision2))
     assertEquals(taberna.elegirMision((e1, e2) => grupo.pozoComun > grupo.pozoComun, grupo).get, mision2)
   }
 
   @Test
   def puedeRealizarMisionPorSerUnaTareaSolaLaQueFalla() = {
     val mision = new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))
-    val taberna = new Taberna(List(mision))
+    val taberna = Taberna(List(mision))
     assertTrue(taberna.elegirMision((e1, e2) => grupo.pozoComun > grupo.pozoComun, grupo).isDefined)
   }
 
   @Test
   def equipoPuedeEntrenar() = {
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
-    val taberna = new Taberna(List(mision1))
+    val taberna = Taberna(List(mision1))
     assertEquals(grupo.entrenar(taberna, (e1, e2) => grupo.pozoComun > grupo.pozoComun),
       grupo.realizarMision(mision1).get)
   }
@@ -347,13 +339,8 @@ class UnTest  {
   def equipoRealizaVariasMisionesAumentandoSuPozoComun() = {
     val mision1 = new Mision(List(PelearContraMonstruo, PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(50))
-    val taberna = new Taberna(List(mision1, mision2))
+    val taberna = Taberna(List(mision1, mision2))
     assertEquals(grupo.entrenar(taberna, (_, _) => grupo.pozoComun > grupo.pozoComun).pozoComun, 150, 0.01)
   }
-  
-  
-
-
-
 
 }
