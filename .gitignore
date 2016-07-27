@@ -1,4 +1,8 @@
+/.idea/
 .cache-main
 .cache-tests
 /bin/
 /target/
+*.xml
+*.iml
+.idea/
