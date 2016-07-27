@@ -47,7 +47,7 @@ class UnTest  {
 
   @Test
   def heroeCambiaDeStatsCuandoSeConvierteEnMago() = {
-    assertEquals(40 ,capitanAmerica.asignarTrabajo(Mago).inteligenciaFinal, 0.01)
+    assertEquals(40 ,capitanAmerica.asignarTrabajo(Mago).stat(InteligenciaFinal), 0.01)
   }
 
   @Test
@@ -63,7 +63,7 @@ class UnTest  {
 
   @Test
   def heroeSeEquipaCascoVikingoYCambiaSusStats() = {
-    assertEquals(spiderman.equipar(CascoVikingo).HPFinal, 20, 0.01)
+    assertEquals(spiderman.equipar(CascoVikingo).stat(HPFinal), 20, 0.01)
   }
 
   @Test
@@ -75,68 +75,68 @@ class UnTest  {
   @Test
   def heroeSeEquipaCascoVikingoYEscudoAntiRoboYCambiaSusStats() = {
     assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(EscudoAntiRobo).
-      HPFinal, 50, 0.01)
+      stat(HPFinal), 50, 0.01)
   }
 
   @Test
   def heroeNoCumpleCondicion() = {
     assertEquals(Try(ironMan.asignarTrabajo(Guerrero).equipar(CascoVikingo)).
-      transform(e => Failure(NoSePudoEquiparUnItem), f => Try(ironMan.asignarTrabajo(Guerrero))).get.HPFinal , 60, 0.01)
+      transform(e => Failure(NoSePudoEquiparUnItem), f => Try(ironMan.asignarTrabajo(Guerrero))).get.stat(HPFinal) , 60, 0.01)
   }
 
   @Test
   def equiparEspadaDeLaVida() = {
-    assertEquals(ironMan.equipar(EspadaDeLaVida).fuerzaFinal, 50, 0.01)
+    assertEquals(ironMan.equipar(EspadaDeLaVida).stat(FuerzaFinal), 50, 0.01)
   }
 
   @Test
   def equiparVincha() = {
-    assertEquals(ironMan.equipar(VinchaDelBufaloDelAgua).HPFinal, 60, 0.01)
+    assertEquals(ironMan.equipar(VinchaDelBufaloDelAgua).stat(HPFinal), 60, 0.01)
   }
 
   @Test
   def equiparTalismanMinimalismo() = {
-    assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(Minimalismo).HPFinal, 110, 0.01)
+    assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(Minimalismo).stat(HPFinal), 110, 0.01)
   }
 
   @Test
   def equiparUnItemYUnTalisman() = {
     assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(Minimalismo).
-      HPFinal, 70, 0.01)
+      stat(HPFinal), 70, 0.01)
   }
 
   @Test
   def heroeSeConvierteEnMagoYPuedeUsarCascoVikingo() = {
-    assertEquals(spiderman.asignarTrabajo(Mago).equipar(CascoVikingo).HPFinal, 20, 0.01)
+    assertEquals(spiderman.asignarTrabajo(Mago).equipar(CascoVikingo).stat(HPFinal), 20, 0.01)
   }
 
   @Test
   def heroeSeEquipaArmadura() = {
-    assertEquals(ironMan.equipar(ArmaduraEleganteSport).velocidadFinal, 70, 0.01)
+    assertEquals(ironMan.equipar(ArmaduraEleganteSport).stat(VelocidadFinal), 70, 0.01)
   }
 
   @Test
   def heroeSeEquipaPaloMagicoSiendoLadron() = {
-    assertEquals(spiderman.asignarTrabajo(Ladron).equipar(PalitoMagico).inteligenciaFinal, 60, 0.01)
+    assertEquals(spiderman.asignarTrabajo(Ladron).equipar(PalitoMagico).stat(InteligenciaFinal), 60, 0.01)
   }
 
   @Test
   def heroeConVariosItemsEsAfectadoPorElTalismanDelMinimalismo() = {
     assertEquals(capitanAmerica.equipar(EspadaDeLaVida).equipar(ArmaduraEleganteSport).
-      equipar(Minimalismo).HPFinal, 70, 0.01)
+      equipar(Minimalismo).stat(HPFinal), 70, 0.01)
   }
 
   @Test
   def heroeSeEquipaEspadaDeLaVida() = {
-    assertEquals(wolverine.asignarTrabajo(Guerrero).equipar(EspadaDeLaVida).fuerzaFinal, 1010, 0.01)
+    assertEquals(wolverine.asignarTrabajo(Guerrero).equipar(EspadaDeLaVida).stat(FuerzaFinal), 1010, 0.01)
   }
 
   @Test
   def heroeSeEquipaTalismanDeDedicacion() = {
-    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).HPFinal, 84.6, 0.0001)
-    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).fuerzaFinal, 50.6, 0.0001)
-    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).velocidadFinal, 64.6, 0.0001)
-    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).inteligenciaFinal, 14.6, 0.0001)
+    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).stat(HPFinal), 84.6, 0.0001)
+    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).stat(FuerzaFinal), 50.6, 0.0001)
+    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).stat(VelocidadFinal), 64.6, 0.0001)
+    assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).stat(InteligenciaFinal), 14.6, 0.0001)
   }
 
   @Test
@@ -170,7 +170,7 @@ class UnTest  {
   @Test
   def equiparDosArmasSimplesIgualesYUnaDiferenteQueReemplazaAUnaObtengoHP() = {
     assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(EscudoAntiRobo).
-      equipar(EspadaDeLaVida).HPFinal, 90, 0.001)
+      equipar(EspadaDeLaVida).stat(HPFinal), 90, 0.001)
   }
 
   @Test
@@ -213,7 +213,7 @@ class UnTest  {
   @Test
   def obtenerItemYVender() = {
     val unEquipo = Equipo("equipo", List(Heroe(0,0,0,0).asignarTrabajo(Guerrero), Heroe(0,0,0,0).asignarTrabajo(Mago)))
-    assertEquals(unEquipo.obtenerItem(ArcoViejo).heroes.filter(_.HPFinal == 10).head.fuerzaFinal, 17, 0.01)
+    assertEquals(unEquipo.obtenerItem(ArcoViejo).heroes.filter(_.stat(HPFinal) == 10).head.stat(FuerzaFinal), 17, 0.01)
   }
 
   @Test
@@ -224,18 +224,18 @@ class UnTest  {
 
   @Test
   def heroeRealizaTareaNoAfectaSusStats() = {
-    assertEquals(wolverine.realizarTarea(PelearContraMonstruo).HPFinal, 1000, 0.01)
+    assertEquals(wolverine.realizarTarea(PelearContraMonstruo).stat(HPFinal), 1000, 0.01)
   }
 
   @Test
   def heroeRealizaTareaYAfectaSusStats() = {
-    assertEquals(ironMan.asignarTrabajo(Ladron).realizarTarea(PelearContraMonstruo).HPFinal, 35, 0.01)
+    assertEquals(ironMan.asignarTrabajo(Ladron).realizarTarea(PelearContraMonstruo).stat(HPFinal), 35, 0.01)
   }
 
   @Test
   def heroeFuerzaPuertaSeModificanSusStats() = {
-    assertEquals(ironMan.asignarTrabajo(Guerrero).realizarTarea(ForzarPuerta).HPFinal, 55, 0.01)
-    assertEquals(ironMan.asignarTrabajo(Guerrero).realizarTarea(ForzarPuerta).fuerzaFinal, 26, 0.01)
+    assertEquals(ironMan.asignarTrabajo(Guerrero).realizarTarea(ForzarPuerta).stat(HPFinal), 55, 0.01)
+    assertEquals(ironMan.asignarTrabajo(Guerrero).realizarTarea(ForzarPuerta).stat(FuerzaFinal), 26, 0.01)
   }
 
   @Test

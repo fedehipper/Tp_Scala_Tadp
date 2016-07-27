@@ -13,7 +13,7 @@ case object PelearContraMonstruo extends Tarea {
     facilidad.orElse(Some(_ => 10))
   }
   def afectar(heroe: Heroe) = {
-    if(heroe.fuerzaFinal < 20) heroe.modificarStats(IncrementoStats(-10, 0, 0, 0))
+    if(heroe.stat(FuerzaFinal) < 20) heroe.modificarStats(IncrementoStats(-10, 0, 0, 0))
     else heroe
   }
 }
@@ -21,7 +21,7 @@ case object PelearContraMonstruo extends Tarea {
 case object ForzarPuerta extends Tarea {
   def facilidadPara(equipo: Equipo) = {
     val incremento = equipo.miembrosConTrabajo.count(_.job.get == Ladron)
-    Some(_.inteligenciaFinal + 10 * incremento)
+    Some(_.stat(InteligenciaFinal) + 10 * incremento)
   }
   def afectar(heroe: Heroe) = {
     val tieneTrabajo = for{trabajo <- heroe.job
@@ -35,14 +35,14 @@ case class RobarTalisman(talisman: Item) extends Tarea {
   def facilidadPara(equipo: Equipo) = for {
     lider <- equipo.lider; trabajo <- lider.job 
     if trabajo eq Ladron
-  } yield _.velocidadFinal
+  } yield _.stat(VelocidadFinal)
   def afectar(heroe: Heroe) = heroe.equipar(talisman)
 }
  
 case object MatarAlDragon extends Tarea {
   def facilidadPara(equipo: Equipo) = {
-    if (equipo.heroes.size > 5) Some(_.fuerzaFinal * 50)
-    else Some(_.fuerzaFinal * 10)
+    if (equipo.heroes.size > 5) Some(_.stat(FuerzaFinal) * 50)
+    else Some(_.stat(FuerzaFinal) * 10)
   }
   def afectar(heroe: Heroe) = heroe.modificarStats(IncrementoStats(1000, 1000, 1000, 1000))
 }

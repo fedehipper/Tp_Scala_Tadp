@@ -42,14 +42,18 @@ case class Inventario(items: List[Item] = Nil) {
   def desequipar(item: Item) = copy(items.filterNot(_ == item))
   
   def valorDeItems(i: (Item, Heroe, Double) => Double)(heroe: Heroe, valor: Double) = {
-    items.foldLeft(valor)((v, item) => i(item, heroe, v))  
+    items.foldLeft(valor)((v, item) => i(item, heroe, v))
   }
   
-  def fuerzaFinal = valorDeItems( _ fuerza(_,_)) _
-  def HPFinal = valorDeItems(_ HP(_, _)) _
-  def velocidadFinal = valorDeItems(_ velocidad(_, _)) _
-  def inteligenciaFinal = valorDeItems(_ inteligencia(_, _)) _
-  
+  def stat(statFinal: StatFinal): (Heroe, Double) => Double = {
+    statFinal match {
+      case FuerzaFinal => valorDeItems(_ fuerza(_, _)) _
+      case HPFinal => valorDeItems(_ HP(_, _)) _
+      case VelocidadFinal => valorDeItems(_ velocidad(_, _)) _
+      case InteligenciaFinal => valorDeItems(_ inteligencia(_, _)) _
+    }
+  }
+ 
   def cantidadItems = items.size
   
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))

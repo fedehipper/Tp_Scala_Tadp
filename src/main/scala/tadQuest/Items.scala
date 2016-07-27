@@ -14,7 +14,7 @@ abstract class Item(val sector: Sector, val iFuerza: Double = 0, val iVelocidad:
   def velocidad(heroe: Heroe, valor: Double) = iVelocidad + valor
   def inteligencia(hereo: Heroe, valor: Double) = iInteligencia + valor
   def fuerza(hereo: Heroe, valor: Double) = iFuerza + valor
-  
+
   def cumpleCondicion(heroe: Heroe): Boolean = true
 }
 
@@ -28,7 +28,7 @@ object PalitoMagico extends Item(ArmaSimple, iInteligencia = 20, precio = 25) {
       if trabajo == Mago || (trabajo == Ladron && heroe.inteligencia > 30)}
     yield heroe
     condicion.isDefined
-  }  
+  }
 }
 
 object ArmaduraEleganteSport extends Item(Armadura, iVelocidad = 30, iHP = -30, precio = 10)
@@ -51,7 +51,7 @@ object EscudoAntiRobo extends Item(ArmaSimple, iHP = 20, precio = 30) {
 }
 
 object Dedicacion extends Item(Talisman, precio = 40) {
-  
+
   def porcentaje(heroe: Heroe) = heroe.desequipar(this).statPrincipal.getOrElse(0: Double) * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
@@ -73,5 +73,5 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, precio = 50) {
 }
 
 object EspadaDeLaVida extends Item(ArmaSimple, precio = 20) {
-  override def fuerza(heroe: Heroe, valor: Double) = heroe.HPFinal
+  override def fuerza(heroe: Heroe, valor: Double) = heroe.stat(HPFinal)
 }
