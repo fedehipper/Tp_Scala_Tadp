@@ -6,3 +6,5 @@
 *.xml
 *.iml
 .idea/
+.settings/
+.classpath
