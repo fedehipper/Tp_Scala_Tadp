@@ -44,8 +44,8 @@ object Maldito extends Item(Talisman, precio = 100) {
 object EscudoAntiRobo extends Item(ArmaSimple, iHP = 20, precio = 30) {
   override def cumpleCondicion(heroe: Heroe) = {
     val condicion = for(trabajo <- heroe.job
-      if(trabajo == Ladron)
-      if(heroe.fuerza < 20))
+      if trabajo == Ladron
+      if heroe.fuerza < 20)
     yield heroe
     condicion.isEmpty
   }
