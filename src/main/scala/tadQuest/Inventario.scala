@@ -45,7 +45,7 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))
   }
   
-  def stat = (_:StatFinal) match {
+  def stat(statFinal: StatFinal) = statFinal match {
       case FuerzaFinal => valorDeItems(_ fuerza(_, _)) _
       case HPFinal => valorDeItems(_ HP(_, _)) _
       case VelocidadFinal => valorDeItems(_ velocidad(_, _)) _

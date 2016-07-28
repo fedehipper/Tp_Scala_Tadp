@@ -15,7 +15,7 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
     val statParcial = inventario.stat(statFinal)
     val valorStatFinal = statFinal match {
       case FuerzaFinal => statParcial(this, statTrabajo(fuerza, _ fuerza _))
-      case HPFinal => statParcial(this ,statTrabajo(HP, _ HP _))
+      case HPFinal => statParcial(this, statTrabajo(HP, _ HP _))
       case VelocidadFinal => statParcial(this, statTrabajo(velocidad,  _ velocidad _)) 
       case InteligenciaFinal => statParcial(this, statTrabajo(inteligencia, _ inteligencia _))
     }
