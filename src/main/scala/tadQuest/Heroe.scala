@@ -12,14 +12,12 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
   def statTrabajo(stat: Double, incremento: (Trabajo, Double) => Double) = job.fold(stat)(incremento(_, stat))
   
   def stat(statFinal: StatFinal) = {
-    val statParcial = inventario.stat(statFinal)
-    val valorStatFinal = statFinal match {
+    inventario.stat(statFinal)(this, statFinal match {
       case FuerzaFinal => statTrabajo(fuerza, _ fuerza _)
       case HPFinal => statTrabajo(HP, _ HP _)
       case VelocidadFinal => statTrabajo(velocidad,  _ velocidad _)
       case InteligenciaFinal => statTrabajo(inteligencia, _ inteligencia _)
-    }
-    statParcial(this, valorStatFinal) max 1
+    }) max 1
   }
   
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
