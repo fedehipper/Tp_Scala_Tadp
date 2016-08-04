@@ -7,15 +7,12 @@ object NoSePudoEquiparUnItem extends Exception
 
 case class Inventario(items: List[Item] = Nil) {
    
-  def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
-    if(item cumpleCondicion heroe) {
-      val equipamientoDe = item.sector match {    
+  def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try (
+    if(item cumpleCondicion heroe)(item.sector match {
         case ArmaDoble => equiparArmaDoble _
         case ArmaSimple => equiparArmaSimple _
         case _ => equiparUnicoItem _
-      }
-      equipamientoDe(item)
-    }
+    })(item)
     else throw NoSePudoEquiparUnItem
   )
   
@@ -51,5 +48,4 @@ case class Inventario(items: List[Item] = Nil) {
   def cantidadItems = items.size
   
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
-  
 }
