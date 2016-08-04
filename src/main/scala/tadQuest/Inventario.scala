@@ -46,12 +46,7 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
-  def stat(statFinal: StatFinal) = valorDeItems(statFinal match {
-    case FuerzaFinal => _ fuerza(_, _)
-    case HPFinal => _ HP(_, _)
-    case VelocidadFinal => _ velocidad(_, _)
-    case InteligenciaFinal => _ inteligencia(_, _)
-  }) _
+  def stat(statIntermedio: Stat) = valorDeItems(_.statItem(statIntermedio, _, _)) _
     
   def cantidadItems = items.size
   

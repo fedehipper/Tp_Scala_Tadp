@@ -12,13 +12,13 @@ abstract class Trabajo(val tHP: Double = 0, val tFuerza: Double = 0,
 }
 
 object Guerrero extends Trabajo(tHP = 10, tFuerza = 15, tInteligencia = -10) {
-  def statPrincipal(heroe: Heroe) = heroe stat FuerzaFinal
+  def statPrincipal(heroe: Heroe) = heroe stat StatFuerza
 }
 
 object Mago extends Trabajo(tInteligencia = 20, tFuerza = -20) {
-  def statPrincipal(heroe: Heroe) = heroe stat InteligenciaFinal
+  def statPrincipal(heroe: Heroe) = heroe stat StatInteligencia
 }
 
 object Ladron extends Trabajo(tVelocidad = 10, tHP = -5) {
-  def statPrincipal(heroe: Heroe) = heroe stat VelocidadFinal
+  def statPrincipal(heroe: Heroe) = heroe stat StatVelocidad
 }

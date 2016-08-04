@@ -1,6 +1,5 @@
 package tadQuest
 
-
 object Sector extends Enumeration {
   type Sector = Value
   val Cabeza, Armadura, ArmaSimple, ArmaDoble, Talisman = Value
@@ -10,10 +9,12 @@ import Sector._
 abstract class Item(val sector: Sector, val iFuerza: Double = 0, val iVelocidad: Double = 0,
     val iInteligencia: Double = 0, val iHP: Double = 0, val precio: Double = 0) {
   
-  def HP(heroe: Heroe, valor: Double) = iHP + valor
-  def velocidad(heroe: Heroe, valor: Double) = iVelocidad + valor
-  def inteligencia(hereo: Heroe, valor: Double) = iInteligencia + valor
-  def fuerza(hereo: Heroe, valor: Double) = iFuerza + valor
+  def statItem(statItem: Stat, heroe: Heroe, valor: Double) = (statItem match {
+    case StatHP => iHP
+    case StatVelocidad => iVelocidad
+    case StatInteligencia => iInteligencia
+    case StatFuerza => iFuerza
+  }) + valor
   
   def cumpleCondicion(heroe: Heroe): Boolean = true
 }
@@ -35,10 +36,7 @@ object ArmaduraEleganteSport extends Item(Armadura, iVelocidad = 30, iHP = -30, 
 object ArcoViejo extends Item(ArmaDoble, iFuerza = 2, precio = 15)
 
 object Maldito extends Item(Talisman, precio = 100) {
-  override def HP(heroe: Heroe, valor: Double) = 1
-  override def velocidad(heroe: Heroe, valor: Double) = 1
-  override def inteligencia(hereo: Heroe, valor: Double) = 1
-  override def fuerza(hereo: Heroe, valor: Double) = 1
+  override def statItem(statItem: Stat, heroe: Heroe, valor: Double) = 1
 }
 
 object EscudoAntiRobo extends Item(ArmaSimple, iHP = 20, precio = 30) {
@@ -52,28 +50,29 @@ object EscudoAntiRobo extends Item(ArmaSimple, iHP = 20, precio = 30) {
 }
 
 object Dedicacion extends Item(Talisman, precio = 40) {
-  
   def porcentaje(heroe: Heroe) = heroe.desequipar(this).statPrincipal.getOrElse(0.0) * 0.1
-  override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
-  override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
-  override def velocidad(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
-  override def inteligencia(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
+  override def statItem(statItem: Stat, heroe: Heroe, valor: Double) = valor + porcentaje(heroe)  
 }
 
 object Minimalismo extends Item(Talisman, precio = 5) {
-  override def HP(heroe: Heroe, valor: Double) = valor + 50 - 10 * (heroe.inventario.items.size - 1)
+  override def statItem(statItem: Stat, heroe: Heroe, valor: Double) = statItem match {
+    case StatHP => 50 - 10 * (heroe.inventario.items.size - 1) + valor
+    case _ => super.statItem(statItem, heroe, valor)
+  }
 }
 
 object VinchaDelBufaloDelAgua extends Item(Cabeza, precio = 50) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job.isEmpty
   
-  override def inteligencia(heroe: Heroe, valor: Double) = if(heroe.fuerza > heroe.inteligencia) valor + 30 else valor
-  override def HP(heroe: Heroe, valor: Double) = if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
-  override def fuerza(heroe: Heroe, valor: Double) = if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
-  override def velocidad(heroe: Heroe, valor: Double) = if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
+  override def statItem(statItem: Stat, heroe: Heroe, valor: Double) = statItem match {
+    case StatInteligencia => if(heroe.fuerza > heroe.inteligencia) valor + 30 else valor
+    case _ => if(heroe.fuerza <= heroe.inteligencia) valor + 10 else valor
+  }
 }
 
 object EspadaDeLaVida extends Item(ArmaSimple, precio = 20) {
-  override def fuerza(heroe: Heroe, valor: Double) = heroe.stat(HPFinal)
+  override def statItem(statItem: Stat, heroe: Heroe, valor: Double) = statItem match {
+    case StatFuerza => heroe.stat(StatHP)
+    case _ => super.statItem(statItem, heroe, valor)
+  }
 }
-
