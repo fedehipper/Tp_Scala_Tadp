@@ -7,15 +7,10 @@ object Sector extends Enumeration {
 import Sector._
 
 abstract class Item(val sector: Sector, val iFuerza: Double = 0, val iVelocidad: Double = 0,
-    val iInteligencia: Double = 0, val iHP: Double = 0, val precio: Double = 0) {
+    val iInteligencia: Double = 0, val iHP: Double = 0, val precio: Double = 0)
+    extends MatcheoStats(iHP, iFuerza, iVelocidad, iInteligencia){
   
-  def statItem(statItem: Stat, heroe: Heroe, valor: Double) = (statItem match {
-    case StatHP => iHP
-    case StatVelocidad => iVelocidad
-    case StatInteligencia => iInteligencia
-    case StatFuerza => iFuerza
-  }) + valor
-  
+  def statItem(statItem: Stat, heroe: Heroe, valor: Double) = matchStat(statItem) + valor
   def cumpleCondicion(heroe: Heroe): Boolean = true
 }
 
@@ -72,7 +67,7 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, precio = 50) {
 
 object EspadaDeLaVida extends Item(ArmaSimple, precio = 20) {
   override def statItem(statItem: Stat, heroe: Heroe, valor: Double) = statItem match {
-    case StatFuerza => heroe.stat(StatHP)
+    case StatFuerza => heroe.statFinal(StatHP)
     case _ => super.statItem(statItem, heroe, valor)
   }
 }
