@@ -14,3 +14,25 @@ abstract class MatcheoStats(HP: Double, fuerza: Double, velocidad: Double, intel
     case StatInteligencia => inteligencia
   }
 }
+
+trait Exito {
+  def map(f:Equipo => Equipo): Exito
+  def isSuccess: Boolean
+  def get: Equipo
+  def toOption: Option[Equipo] = if(isSuccess) Some(this.get) else None
+  def isFailure: Boolean
+}
+
+case class PudoRealizar(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo): Exito = PudoRealizar(f(equipo))
+  def isSuccess: Boolean = true
+  def get: Equipo = equipo
+  def isFailure: Boolean = false
+}
+
+case class NoPudoRealizar(equipo: Equipo, tarea: Tarea) extends Exito {
+  def map(f: Equipo => Equipo): Exito = this
+  def isSuccess: Boolean = false
+  def get: Equipo = equipo
+  def isFailure: Boolean = true
+}
