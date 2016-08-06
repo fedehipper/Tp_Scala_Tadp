@@ -8,7 +8,7 @@ trait ResultadoMision {
   def terminar(mision: Mision): ResultadoMision
   def isSuccess: Boolean = true
   def toOption: Option[Equipo] = if(isSuccess) Some(this.get) else None
-  def get : Equipo
+  def get: Equipo
 }
 case class CumpleMision(equipo: Equipo) extends ResultadoMision {
   def map(f: Equipo => Equipo): ResultadoMision = CumpleMision(f(equipo))
@@ -68,11 +68,9 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): ResultadoMision = 
-    mision.tareas.foldLeft(CumpleMision(this): ResultadoMision)((anterior, tarea) => {
-      anterior match {
-        case FallaMision(_,_) => anterior
-        case _ => postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(equipo => anterior.map(_ => equipo))
-      }
+    mision.tareas.foldLeft(CumpleMision(this): ResultadoMision)((anterior, tarea) => anterior match {
+      case FallaMision(_,_) => anterior
+      case _ => postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(equipo => anterior.map(_ => equipo))
     }
   ).terminar(mision)
 

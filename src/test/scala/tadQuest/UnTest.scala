@@ -6,10 +6,10 @@ import org.junit.Assert._
 
 class UnTest  {
 
-  var spiderman:Heroe = _
-  var ironMan:Heroe = _
-  var capitanAmerica:Heroe = _
-  var wolverine:Heroe = _
+  var spiderman: Heroe = _
+  var ironMan: Heroe = _
+  var capitanAmerica: Heroe = _
+  var wolverine: Heroe = _
   var kratos: Heroe = _
   var equipo: Equipo = _
   var otroEquipo: Equipo = _

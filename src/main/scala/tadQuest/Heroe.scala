@@ -4,11 +4,9 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
                  job: Option[Trabajo] = None, inventario: Inventario = new Inventario)
                  extends MatcherStats(HP, velocidad, fuerza, inteligencia) { 
   
-  def incrementoJob(stat: Double, delta: (Trabajo, Double) => Double) = job.fold(stat)(delta(_, stat))
-
-  def statJob(stat: Stat) = incrementoJob(matcheoStats(stat), _ statJob(stat, _))
+  def valorTrabajo(stat: Stat) = job.foldLeft(matcheoStats(stat))((base, j) => j.statJob(stat, base))
   
-  def stat(stat: Stat) = inventario.stat(stat)(this, statJob(stat)) max 1
+  def stat(stat: Stat) = inventario.valorInventario(stat)(this, valorTrabajo(stat)) max 1
   
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   

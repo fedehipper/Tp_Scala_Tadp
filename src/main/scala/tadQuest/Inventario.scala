@@ -42,7 +42,7 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))
   }
  
-  def stat(statFinal: Stat) = valorDeItems(_ statItem(statFinal, _ , _)) _
+  def valorInventario(statFinal: Stat) = valorDeItems(_ statItem(statFinal, _ , _)) _
     
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
 }
