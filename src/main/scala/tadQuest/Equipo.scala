@@ -1,35 +1,5 @@
 package tadQuest
 
-case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception
-
-trait ResultadoMision {
-  def map(f: Equipo => Equipo): ResultadoMision
-  def falloTarea(tarea: Tarea): ResultadoMision
-  def terminar(mision: Mision): ResultadoMision
-  def isSuccess: Boolean = true
-  def toOption: Option[Equipo] = if(isSuccess) Some(this.get) else None
-  def get: Equipo
-}
-case class CumpleMision(equipo: Equipo) extends ResultadoMision {
-  def map(f: Equipo => Equipo): ResultadoMision = CumpleMision(f(equipo))
-  def falloTarea(tarea: Tarea): ResultadoMision = CumpleMisionParcial(equipo)
-  def terminar(mision: Mision): ResultadoMision = this.map(_.cobrarRecompensa(mision))
-  def get = equipo
-}
-case class CumpleMisionParcial(equipo: Equipo) extends ResultadoMision {
-  def map(f: Equipo => Equipo): ResultadoMision = CumpleMisionParcial(f(equipo))
-  def falloTarea(tarea: Tarea): ResultadoMision = FallaMision(equipo,tarea)
-  def terminar(mision: Mision): ResultadoMision = this
-  def get = equipo
-}
-case class FallaMision(equipo: Equipo, tarea: Tarea) extends ResultadoMision {
-  def map(f: Equipo => Equipo): ResultadoMision = this
-  def falloTarea(tarea: Tarea): ResultadoMision = this
-  def terminar(mision: Mision): ResultadoMision = this
-  override def isSuccess: Boolean = false
-  def get = equipo
-}
-
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
@@ -80,10 +50,9 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   }
   
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-    val equipo = this
     (for{misionElegida <- taberna.elegirMision(criterio, this)
          equipo <- realizarMision(misionElegida).toOption}
-    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)).getOrElse(equipo)
+    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)).getOrElse(this)
   }
   
 }
