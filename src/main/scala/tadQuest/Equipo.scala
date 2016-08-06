@@ -16,11 +16,11 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) == maximo(cuantificador))
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
-  
+   
   def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: IncrementoStats) = {
-    copy(heroes = heroes.filter(condicion(_)).map(_.modificarStats(recompensa)))
+    copy(heroes = for(heroe <- heroes if condicion(heroe)) yield heroe modificarStats recompensa)
   }
- 
+  
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
   def obtenerItem(item: Item): Equipo = (
@@ -40,7 +40,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def realizarMision(mision: Mision): ResultadoMision = 
     mision.tareas.foldLeft(CumpleMision(this): ResultadoMision)((anterior, tarea) => anterior match {
       case FallaMision(_,_) => anterior
-      case _ => postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(equipo => anterior.map(_ => equipo))
+      case _ =>
+        postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(equipo => anterior.map(_ => equipo))
     }
   ).terminar(mision)
 
