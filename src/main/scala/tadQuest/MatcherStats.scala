@@ -23,14 +23,14 @@ trait Exito {
   def isFailure: Boolean
 }
 
-case class PudoRealizar(equipo: Equipo) extends Exito {
-  def map(f: Equipo => Equipo): Exito = PudoRealizar(f(equipo))
+case class Realizo(equipo: Equipo) extends Exito {
+  def map(f: Equipo => Equipo): Exito = Realizo(f(equipo))
   def isSuccess: Boolean = true
   def get: Equipo = equipo
   def isFailure: Boolean = false
 }
 
-case class NoPudoRealizar(equipo: Equipo, tarea: Tarea) extends Exito {
+case class NoRealizo(equipo: Equipo, tarea: Tarea) extends Exito {
   def map(f: Equipo => Equipo): Exito = this
   def isSuccess: Boolean = false
   def get: Equipo = equipo

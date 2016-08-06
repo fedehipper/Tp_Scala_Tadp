@@ -18,7 +18,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
   def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: IncrementoStats) = {
-    copy(heroes = heroes filter(condicion(_)) map(_ modificarStats recompensa))
+    copy(heroes = for(heroe <- heroes if condicion(heroe)) yield heroe modificarStats recompensa)
   }
  
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
@@ -39,10 +39,9 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): Exito = 
-    mision.tareas.foldLeft(PudoRealizar(this): Exito)((resultadoAnterior, tarea) => resultadoAnterior match {
-      case NoPudoRealizar(_, _) => resultadoAnterior
-      case PudoRealizar(equipo) => 
-        postTarea(equipo, tarea).fold(NoPudoRealizar(equipo, tarea): Exito)(PudoRealizar(_))
+    mision.tareas.foldLeft(Realizo(this): Exito)((resultadoAnterior, tarea) => resultadoAnterior match {
+      case NoRealizo(_, _) => resultadoAnterior
+      case Realizo(equipo) => postTarea(equipo, tarea).fold(NoRealizo(equipo, tarea): Exito)(Realizo(_))
     }
   ).map(_ cobrarRecompensa mision)
 
@@ -51,12 +50,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
   }
     
-  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-    (for {
-      misionElegida <- taberna.elegirMision(criterio, this)
-      equipo <- realizarMision(misionElegida).toOption
-    }
-    yield equipo.entrenar(taberna.misionRealizada(misionElegida), criterio)).getOrElse(this)
-  }
- 
+  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = (
+    for{misionElegida <- taberna.elegirMision(criterio, this) ; equipo <- realizarMision(misionElegida).toOption}
+      yield equipo.entrenar(taberna.misionRealizada(misionElegida), criterio)).getOrElse(this)
+      
 }
