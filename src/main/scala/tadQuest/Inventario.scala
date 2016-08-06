@@ -27,10 +27,9 @@ case class Inventario(items: List[Item] = Nil) {
     copy(item :: items.filterNot(i => i.sector == ArmaSimple || i.sector == ArmaDoble))
   }
   
-  def armasSimples = items.filter(_.sector == ArmaSimple)
-  
   def equiparArmaSimple(item: Item) = {
-    if (items.exists(_.sector == ArmaDoble)) copy(item :: items.filterNot(_.sector == ArmaDoble))
+    val armasSimples = items.filter(_.sector == ArmaSimple)
+    if (items.exists(_.sector == ArmaDoble)) copy(item:: items.filterNot(_.sector == ArmaDoble))
     else {
       if (armasSimples.size < 2 && armasSimples.isEmpty) agregarItem(item)
       else copy(item :: armasSimples.head :: items.filterNot(_.sector == ArmaSimple))
@@ -40,10 +39,10 @@ case class Inventario(items: List[Item] = Nil) {
   def desequipar(item: Item) = copy(items.filterNot(_ == item))
   
   def valorDeItems(i: (Item, Heroe, Double) => Double)(heroe: Heroe, valor: Double) = {
-    items.foldLeft(valor)((v, item) => i(item, heroe, v))  
+    items.foldLeft(valor)((v, item) => i(item, heroe, v))
   }
-  
-  def stat(statIntermedio: Stat) = valorDeItems(_ statItem(statIntermedio, _, _)) _
+ 
+  def valorInventario(stat: Stat) = valorDeItems(_ statItem(stat, _ , _)) _
     
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
 }

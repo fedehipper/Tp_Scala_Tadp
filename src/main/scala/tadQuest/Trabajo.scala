@@ -4,7 +4,7 @@ abstract class Trabajo(val tHP: Double = 0, val tFuerza: Double = 0,
                        val tVelocidad: Double = 0, val tInteligencia: Double = 0)
                        extends MatcheoStats(tHP, tFuerza, tVelocidad, tInteligencia) {
 
-  def baseTrabajo(stat: Stat, base: Double) = matchStat(stat) + base
+  def statJob(stat: Stat, base: Double) = matchStat(stat) + base
   def statPrincipal(heroe: Heroe): Double
 }
 
