@@ -19,12 +19,10 @@ object CascoVikingo extends Item(Cabeza, iHP = 10, precio = 5) {
 }
 
 object PalitoMagico extends Item(ArmaSimple, iInteligencia = 20, precio = 25) {
-  override def cumpleCondicion(heroe: Heroe) = {
-    val condicion = for {trabajo <- heroe.job
+  override def cumpleCondicion(heroe: Heroe) = (
+    for {trabajo <- heroe.job
       if trabajo == Mago || (trabajo == Ladron && heroe.inteligencia > 30)}
-    yield heroe
-    condicion.isDefined
-  }  
+    yield heroe).isDefined
 }
 
 object ArmaduraEleganteSport extends Item(Armadura, iVelocidad = 30, iHP = -30, precio = 10)

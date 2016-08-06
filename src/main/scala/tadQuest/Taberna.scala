@@ -1,6 +1,5 @@
 package tadQuest
 
-
 case class Taberna(misiones: List[Mision]) {
   
   def misionesRealizables(equipo: Equipo) = misiones.filter(equipo.realizarMision(_).isSuccess)

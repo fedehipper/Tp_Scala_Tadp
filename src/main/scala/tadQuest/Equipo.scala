@@ -45,12 +45,11 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
  
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
-  def obtenerItem(item: Item): Equipo = {
-    val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
+  def obtenerItem(item: Item): Equipo = (
+    for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
       if incrementoStat(heroe, item) > 0}
     yield reemplazar(heroe, heroe equipar item)
-    equipoConItem.getOrElse(incrementarPozo(item.precio))
-  }
+  ).getOrElse(incrementarPozo(item.precio))
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_ equipar item))
   
@@ -62,27 +61,24 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): Exito = 
-    mision.tareas.foldLeft(PudoRealizar(this): Exito)((resultadoAnterior, tarea) => {
-      resultadoAnterior match {
-        case NoPudoRealizar(_, _) => resultadoAnterior
-        case PudoRealizar(equipo) => postTarea(equipo, tarea).fold(NoPudoRealizar(equipo, tarea): Exito)(PudoRealizar(_))
-      }
+    mision.tareas.foldLeft(PudoRealizar(this): Exito)((resultadoAnterior, tarea) => resultadoAnterior match {
+      case NoPudoRealizar(_, _) => resultadoAnterior
+      case PudoRealizar(equipo) => postTarea(equipo, tarea).fold(NoPudoRealizar(equipo, tarea): Exito)(PudoRealizar(_))
     }
   ).map(_ cobrarRecompensa mision)
 
   def postTarea(equipo: Equipo, tarea: Tarea): Option[Equipo] = {
-    for (heroe <- equipo elMejorPuedeRealizar tarea) 
+    for(heroe <- equipo elMejorPuedeRealizar tarea) 
     yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
   }
     
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
     val equipo = this
-    val resultadoEntrenar = for {
+    (for {
       misionElegida <- taberna.elegirMision(criterio, this)
       equipo <- realizarMision(misionElegida).toOption
     }
-    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
-    resultadoEntrenar.getOrElse(equipo)
+    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)).getOrElse(equipo)
   }
  
 }

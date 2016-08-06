@@ -9,16 +9,16 @@ case class Inventario(items: List[Item] = Nil) {
    
   def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try (
     if(item cumpleCondicion heroe)(item.sector match {
-        case ArmaDoble => equiparArmaDoble _
-        case ArmaSimple => equiparArmaSimple _
-        case _ => equiparUnicoItem _
+      case ArmaDoble => equiparArmaDoble _
+      case ArmaSimple => equiparArmaSimple _
+      case _ => equiparUnicoItem _
     })(item)
     else throw NoSePudoEquiparUnItem
   )
   
   def agregarItem(item: Item) = copy(item :: items)
   
-  def equiparUnicoItem(item: Item) = item.sector match{
+  def equiparUnicoItem(item: Item) = item.sector match {
     case Talisman => agregarItem(item)
     case _ => copy(item :: items.filterNot(_ == item.sector))
   }
@@ -43,9 +43,7 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))  
   }
   
-  def stat(statIntermedio: Stat) = valorDeItems(_.statItem(statIntermedio, _, _)) _
+  def stat(statIntermedio: Stat) = valorDeItems(_ statItem(statIntermedio, _, _)) _
     
-  def cantidadItems = items.size
-  
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
 }
