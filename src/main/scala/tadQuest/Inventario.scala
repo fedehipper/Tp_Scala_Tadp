@@ -8,20 +8,17 @@ object NoSePudoEquiparUnItem extends Exception
 case class Inventario(items: List[Item] = Nil) {
    
   def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try (
-    if(item cumpleCondicion heroe) {
-      val equipamientoDe = item.sector match {    
-        case ArmaDoble => equiparArmaDoble _
-        case ArmaSimple => equiparArmaSimple _
-        case _ => equiparUnicoItem _
-      }
-      equipamientoDe(item)
-    }
+    if(item cumpleCondicion heroe)(item.sector match {
+      case ArmaDoble => equiparArmaDoble _
+      case ArmaSimple => equiparArmaSimple _
+      case _ => equiparUnicoItem _
+    })(item)
     else throw NoSePudoEquiparUnItem
   )
   
   def agregarItem(item: Item) = copy(item :: items)
   
-  def equiparUnicoItem(item: Item) = item.sector match{
+  def equiparUnicoItem(item: Item) = item.sector match {
     case Talisman => agregarItem(item)
     case _ => copy(item :: items.filterNot(_ == item.sector))
   }
@@ -45,15 +42,7 @@ case class Inventario(items: List[Item] = Nil) {
     items.foldLeft(valor)((v, item) => i(item, heroe, v))
   }
  
-  def stat(statFinal: StatFinal) = valorDeItems(statFinal match {
-    case FuerzaFinal => _ fuerza(_, _)
-    case HPFinal => _ HP(_, _)
-    case VelocidadFinal => _ velocidad(_, _)
-    case InteligenciaFinal => _ inteligencia(_, _)
-  }) _
-  
-  def cantidadItems = items.size
-  
+  def stat(statFinal: Stat) = valorDeItems(_ statItem(statFinal, _ , _)) _
+    
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
-  
 }

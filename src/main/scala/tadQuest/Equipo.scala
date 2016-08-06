@@ -1,7 +1,6 @@
 package tadQuest
 
 case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception
- 
 
 trait ResultadoMision {
   def map(f: Equipo => Equipo): ResultadoMision
@@ -31,7 +30,6 @@ case class FallaMision(equipo: Equipo, tarea: Tarea) extends ResultadoMision {
   def get = equipo
 }
 
-
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
@@ -55,17 +53,15 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
  
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
-  def obtenerItem(item: Item): Equipo = {
-    val darAlMejor = for(heroe <- mejorHeroeSegun(incrementoStat(_, item))
+  def obtenerItem(item: Item): Equipo = (
+    for(heroe <- mejorHeroeSegun(incrementoStat(_, item))
       if incrementoStat(heroe, item) > 0)
-    yield reemplazar(heroe, heroe equipar item)
-    darAlMejor.getOrElse(incrementarPozo(item.precio))
-  }
+    yield reemplazar(heroe, heroe equipar item)).getOrElse(incrementarPozo(item.precio))
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
-    for {facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad)}
+    for(facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad))
     yield elMejor
   }
   
@@ -81,19 +77,15 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   ).terminar(mision)
 
   def postTarea(equipo: Equipo, tarea: Tarea) = {
-    for {heroe <- equipo elMejorPuedeRealizar tarea} 
-    yield {equipo.reemplazar(heroe, heroe realizarTarea tarea)}
+    for(heroe <- equipo elMejorPuedeRealizar tarea) 
+    yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
   }
   
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
     val equipo = this
-    val resultadoEntrenar = for {
-      misionElegida <- taberna.elegirMision(criterio, this)
-      equipo <- realizarMision(misionElegida).toOption
-    }
-    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
-    resultadoEntrenar.getOrElse(equipo)
+    (for{misionElegida <- taberna.elegirMision(criterio, this)
+         equipo <- realizarMision(misionElegida).toOption}
+    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)).getOrElse(equipo)
   }
   
- 
 }

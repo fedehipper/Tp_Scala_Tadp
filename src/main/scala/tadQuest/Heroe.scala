@@ -1,25 +1,15 @@
 package tadQuest
 
-trait StatFinal
-case object FuerzaFinal extends StatFinal
-case object HPFinal extends StatFinal
-case object VelocidadFinal extends StatFinal
-case object InteligenciaFinal extends StatFinal
-
 case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Double,
-                 job: Option[Trabajo] = None, inventario: Inventario = new Inventario) { 
+                 job: Option[Trabajo] = None, inventario: Inventario = new Inventario)
+                 extends MatcherStats(HP, velocidad, fuerza, inteligencia) { 
   
-  def statTrabajo(stat: Double, incremento: (Trabajo, Double) => Double) = job.fold(stat)(incremento(_, stat))
+  def incrementoJob(stat: Double, delta: (Trabajo, Double) => Double) = job.fold(stat)(delta(_, stat))
 
-  def stat(statFinal: StatFinal) = {
-    inventario.stat(statFinal)(this, statFinal match {
-      case FuerzaFinal => statTrabajo(fuerza, _ fuerza _)
-      case HPFinal => statTrabajo(HP, _ HP _)
-      case VelocidadFinal => statTrabajo(velocidad,  _ velocidad _) 
-      case InteligenciaFinal => statTrabajo(inteligencia, _ inteligencia _)
-    }) max 1
-  }
- 
+  def statJob(stat: Stat) = incrementoJob(matcheoStats(stat), _ statJob(stat, _))
+  
+  def stat(stat: Stat) = inventario.stat(stat)(this, statJob(stat)) max 1
+  
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   
   def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
