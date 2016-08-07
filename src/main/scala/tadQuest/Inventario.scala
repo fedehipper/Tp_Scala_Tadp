@@ -43,6 +43,6 @@ case class Inventario(items: List[Item] = Nil) {
   }
  
   def valorInventario(stat: Stat) = valorDeItems(_ statItem(stat, _ , _)) _
-    
+  
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
 }
