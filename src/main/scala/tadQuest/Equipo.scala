@@ -19,7 +19,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   }
   
   def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: IncrementoStats) = {
-    copy(heroes = for(heroe <- heroes if condicion(heroe)) yield heroe modificarStats recompensa)
+    copy(heroes = for(heroe <- heroes if condicion(heroe)) 
+      yield heroe modificarStats recompensa)
   }
   
   def obtenerItem(item: Item): Equipo = (
@@ -28,17 +29,16 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     yield reemplazar(heroe, heroe equipar item)).getOrElse(incrementarPozo(item.precio))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
-    for(facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad))
-    yield elMejor
+    for(facilidad <- tarea facilidadPara this; mejor <- mejorHeroeSegun(facilidad))
+    yield mejor
   }
   
-  def realizarMision(mision: Mision): ResultadoMision = 
+  def realizarMision(mision: Mision): ResultadoMision = { 
     mision.tareas.foldLeft(CumpleMision(this): ResultadoMision)((anterior, tarea) => anterior match {
       case FallaMision(_,_) => anterior
-      case _ =>
-        postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(equipo => anterior.map(_ => equipo))
+      case _ => postTarea(anterior.get, tarea).fold(anterior.falloTarea(tarea))(team => anterior.map(_ => team))
     }
-  ).terminar(mision)
+  ).terminar(mision)}
 
   def postTarea(equipo: Equipo, tarea: Tarea) = {
     for(heroe <- equipo elMejorPuedeRealizar tarea) 
