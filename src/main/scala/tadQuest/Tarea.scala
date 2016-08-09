@@ -19,7 +19,7 @@ case object PelearContraMonstruo extends Tarea {
 
 case object ForzarPuerta extends Tarea {
   def facilidadPara(equipo: Equipo) = {
-    val incremento = equipo.miembrosConTrabajo.count(_.job.get == Ladron)
+    val incremento = equipo.heroesTrabajando.count(_.job.get == Ladron)
     Some(_.stat(StatInteligencia) + 10 * incremento)
   }
   def afectar(heroe: Heroe) = (
