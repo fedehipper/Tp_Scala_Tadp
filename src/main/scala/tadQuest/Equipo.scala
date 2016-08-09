@@ -40,10 +40,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     if (miembrosConTrabajo.nonEmpty) copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
     else None
   }
- 
-  def maximo = heroes.map(_: Heroe => Double).max
-  
-  def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) == maximo(cuantificador))
+
+  def mejorHeroeSegun(quantifier: Heroe => Double) = heroes.find(quantifier(_) == heroes.map(quantifier(_)).max)
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
@@ -65,7 +63,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     yield elMejor
   }
   
-  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
+  val cobrarRecompensa = (_:Mision).recompensa cobrar this
   
   def realizarMision(mision: Mision): ResultadoMision = 
     mision.tareas.foldLeft(CumpleMision(this): ResultadoMision)((anterior, tarea) => anterior match {
@@ -79,11 +77,9 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
   }
   
-  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-    val equipo = this
-    (for{misionElegida <- taberna.elegirMision(criterio, this)
-         equipo <- realizarMision(misionElegida).toOption}
-    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)).getOrElse(equipo)
-  }
-  
+  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = (
+    for{misionElegida <- taberna.elegirMision(criterio, this)
+       equipo <- realizarMision(misionElegida).toOption}
+    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)).getOrElse(this)
+
 }
