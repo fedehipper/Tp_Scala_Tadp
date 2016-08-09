@@ -6,7 +6,7 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
   
   def valorTrabajo(stat: Stat) = job.foldLeft(matchStat(stat))((base, j) => j.statJob(stat, base))
   
-  def statFinal(stat: Stat) = inventario.valorInventario(stat)(this, valorTrabajo(stat)) max 1
+  def statFinal(stat: Stat) = inventario.valorInventario(stat, this) max 1
    
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   
