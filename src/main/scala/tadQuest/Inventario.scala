@@ -38,11 +38,9 @@ case class Inventario(items: List[Item] = Nil) {
   
   def desequipar(item: Item) = copy(items.filterNot(_ == item))
   
-  def valorDeItems(i: (Item, Heroe, Double) => Double)(heroe: Heroe, valor: Double) = {
-    items.foldLeft(valor)((v, item) => i(item, heroe, v))
+  def valorInventario(stat: Stat, heroe: Heroe) = {
+    items.foldLeft(heroe.valorTrabajo(stat))((v, item) => item.statItem(stat, heroe, v))
   }
- 
-  def valorInventario(statFinal: Stat) = valorDeItems(_ statItem(statFinal, _ , _)) _
-    
+
   def actualizarInventario(heroe: Heroe) = copy(items.filter(_.cumpleCondicion(heroe)))
 }
