@@ -25,8 +25,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def obtenerItem(item: Item): Equipo = (
     for{heroe <- mejorHeroeSegun(incrementoStat(_, item))
       if incrementoStat(heroe, item) > 0}
-    yield reemplazar(heroe, heroe equipar item)
-  ).getOrElse(incrementarPozo(item.precio))
+    yield reemplazar(heroe, heroe equipar item)).getOrElse(incrementarPozo(item.precio))
    
   def elMejorPuedeRealizar(tarea: Tarea) = {
     for(facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad))
@@ -47,6 +46,6 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = (
     for{misionElegida <- taberna.elegirMision(criterio, this) ; equipo <- realizarMision(misionElegida).toOption}
-      yield equipo.entrenar(taberna.misionRealizada(misionElegida), criterio)).getOrElse(this)
+      yield equipo entrenar(taberna.misionRealizada(misionElegida), criterio)) getOrElse(this)
       
 }
