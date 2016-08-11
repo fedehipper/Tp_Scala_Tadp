@@ -1,6 +1,5 @@
 package tadQuest
 
-import Sector._
 import scala.util.Try
 
 object NoSePudoEquiparUnItem extends Exception

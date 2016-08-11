@@ -1,5 +1,12 @@
 package tadQuest
 
+trait Sector
+case object Cabeza extends Sector
+case object Armadura extends Sector
+case object ArmaSimple extends Sector
+case object ArmaDoble extends Sector
+case object Talisman extends Sector
+
 trait Stat
 case object StatFuerza extends Stat
 case object StatHP extends Stat

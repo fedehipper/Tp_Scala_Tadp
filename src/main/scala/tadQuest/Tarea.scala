@@ -2,7 +2,7 @@ package tadQuest
 
 trait Tarea {
   def facilidadPara(equipo: Equipo): Option[Heroe => Double]
-  def afectar(heroe: Heroe): Heroe = heroe
+  def afectar(heroe: Heroe) = heroe
 }
 
 case object PelearContraMonstruo extends Tarea {

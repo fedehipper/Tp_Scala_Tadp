@@ -3,13 +3,21 @@ package tadQuest
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
+  
   def miembrosConTrabajo = heroes.filter(_.job.isDefined)
+  
   def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
+  
   def maximo = heroes.map(_: Heroe => Double).max
+  
   def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) == maximo(cuantificador))
+  
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
+  
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
+  
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_ equipar item))
+  
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def lider: Option[Heroe] = {
