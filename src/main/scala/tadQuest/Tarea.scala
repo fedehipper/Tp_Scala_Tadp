@@ -29,10 +29,10 @@ case object ForzarPuerta extends Tarea {
 }
 
 case class RobarTalisman(talisman: Item) extends Tarea {
-  def facilidadPara(equipo: Equipo) = (
+  def facilidadPara(equipo: Equipo) =
     for(lider <- equipo.lider; trabajo <- lider.job 
       if trabajo eq Ladron)
-    yield _.statFinal(StatVelocidad))
+    yield _.statFinal(StatVelocidad)
     
   override def afectar(heroe: Heroe) = heroe.equipar(talisman)
 }

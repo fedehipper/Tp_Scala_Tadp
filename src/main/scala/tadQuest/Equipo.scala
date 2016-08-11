@@ -53,7 +53,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   }
     
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = (
-    for{misionElegida <- taberna.elegirMision(criterio, this) ; equipo <- realizarMision(misionElegida).toOption}
-      yield equipo entrenar(taberna.misionRealizada(misionElegida), criterio)) getOrElse(this)
+    for(misionElegida <- taberna.elegirMision(criterio, this) ; equipo <- realizarMision(misionElegida).toOption)
+      yield equipo entrenar(taberna.misionRealizada(misionElegida), criterio)) getOrElse this
       
 }
