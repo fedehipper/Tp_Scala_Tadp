@@ -8,9 +8,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   
   def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
-  def maximo = heroes.map(_: Heroe => Double).max
-  
-  def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(cuantificador(_) == maximo(cuantificador))
+  def mejorHeroeSegun(cuantificador: Heroe => Double) = Some(heroes.maxBy(cuantificador(_)))
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
@@ -31,8 +29,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   }
   
   def obtenerItem(item: Item): Equipo = (
-    for{heroe <- mejorHeroeSegun(incrementoStat(_, item))
-      if incrementoStat(heroe, item) > 0}
+    for(heroe <- mejorHeroeSegun(incrementoStat(_, item))
+      if incrementoStat(heroe, item) > 0)
     yield reemplazar(heroe, heroe equipar item)).getOrElse(incrementarPozo(item.precio))
    
   def elMejorPuedeRealizar(tarea: Tarea) = {
