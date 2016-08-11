@@ -12,6 +12,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     if(heroes.nonEmpty) Some(heroes.maxBy(cuantificador(_)))
     else None
   }
+  
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
