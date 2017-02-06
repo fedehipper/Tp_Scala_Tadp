@@ -20,7 +20,7 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
      copy(HP + i.HP, fuerza + i.fuerza, velocidad + i.velocidad, inteligencia + i.inteligencia)
   }
   
-  def realizarTarea(tarea: Tarea) = tarea.afectar(this).actualizarEstado
+  def realizarTarea = (_:Tarea) afectar(this).actualizarEstado
 
   def actualizarEstado = copy(inventario = inventario actualizarInventario this)
 }
