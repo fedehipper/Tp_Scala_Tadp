@@ -19,7 +19,7 @@ case class Inventario(items: List[Item] = Nil) {
   
   def equiparUnicoItem(item: Item) = item.sector match {
     case Talisman => agregarItem(item)
-    case _ => copy(item :: items.filterNot(_ == item.sector))
+    case _ => copy(item :: items.filterNot(_ equals item.sector))
   }
   
   def equiparArmaDoble(item: Item) = {

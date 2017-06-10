@@ -17,6 +17,7 @@ class UnTest {
   var equipo2: Equipo = _
   var icaros: Heroe = _
   var grupo: Equipo = _
+  
 
   @Before
   def setup() = {
